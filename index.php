@@ -20,24 +20,17 @@ class IndexPage extends HTMLPage {
 <p>Имею 20-летний опыт работы с молодежью, специалист в области образования, в проведении круглых столов, тренингов, семинаров.</p>';
 
     
-
-    
-    // Работа с REDBeanPHP https://www.sitepoint.com/introduction-redbean/
-    function getLinkService(){// получаю массив картинок и услуг из БД для главной страницы
-        // обращ-е к родит классу PEDBEAN без создания экз (статически)
-        //return $arrServ = R::getAll('SELECT title, img FROM services WHERE view_main = ? ', [ 1 ] );
-        return $arrServ = R::getAll('SELECT title, img FROM main_services' );
+	function getLinkService($table, $asc){
+		return $this -> query -> getAllFields($table, $asc);
 	}
-    
+	
+	
     
     // вывод блока ЧЕМ Я МОГУ ПОМОЧЬ (список услуг с описанием)
-    function getService(){
-        // запрос и получение всего массива услуг из БД
-        //return $arrFullServ = R::getAll('SELECT * FROM services WHERE view_main = ? ', [ 0 ]);
-        return $arrFullServ = R::getAll('SELECT * FROM services');
-
-        
-    }
+	function getService($table,$asc){
+		// запрос и получение всего массива услуг из БД
+		return $this -> query -> getAllFields($table, $asc);
+	}
     
     function getVideos($table,$asc){
         return $this -> query -> getAllFields($table, $asc);
@@ -74,23 +67,23 @@ class IndexPage extends HTMLPage {
 
 $Page = new IndexPage($title);
 
-$Page->BeginHTML();
-$Page->menuHeader($Page -> getContacts('userdata', 'asc')[0]['phone']); // вывод телефона из БД
+$Page -> BeginHTML();
+$Page -> menuHeader($Page -> getContacts('userdata', 'asc')[0]['phone']); // вывод телефона из БД
 
 // вывод приветствия, услуг, отзывов
-$Page -> homePage($Page -> mainTxt, $Page -> getLinkService(), $Page -> getTestmon('testmonials','asc'), $Page -> getVideos('videos','asc'));
+$Page -> homePage($Page -> mainTxt, $Page -> getLinkService('main_services', 'asc'), $Page -> getTestmon('testmonials','asc'), $Page -> getVideos('videos','asc'));
 
 
 
-$Page->about($Page -> getDiploms('diploms','asc')); // страница ОБО МНЕ
+$Page -> about($Page -> getDiploms('diploms','asc')); // страница ОБО МНЕ
 
-$Page->Services($Page->getService(), $Page->getPriceTable('price_table','asc'));//вывод страницы услуг с кр описанием
+$Page -> Services($Page->getService('services','asc'), $Page->getPriceTable('price_table','asc'));//вывод страницы услуг с кр описанием
 // вывод таблицы цен
 
-$Page->contacts($Page -> getContacts('userdata', 'asc'), $Page -> getWorks('works','asc'));// запрос контактных данных в масиве и списка услуг для страницы контакты
+$Page -> contacts($Page -> getContacts('userdata', 'asc'), $Page -> getWorks('works','asc'));// запрос контактных данных в масиве и списка услуг для страницы контакты
 
 
-$Page->EndHTML();
+$Page -> EndHTML();
 
 
 

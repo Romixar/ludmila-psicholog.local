@@ -76,7 +76,7 @@ if(count($_POST) != 0){
             
         if($res === 'abc'){
             if($manage -> add($data, $manage -> table))
-                echo $manage -> query -> checkErrors($_POST, true, $res);// успешное собщение
+                echo $manage -> query -> checkErrors($_POST, true, $res);// успешное сообщение
             else echo $manage -> query -> checkErrors($_POST, false, $res);// собщение ошибки
         }
     }

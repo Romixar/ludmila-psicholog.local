@@ -17,25 +17,17 @@ class ManageContacts{
     public function __construct(){
         $this -> query = new DB();// инициализация объектв DB
     }
-    
-    public function getContacts($table, $asc){
-        return $this -> query -> getAllFields($table, $asc);
-    }
-    
-    public function getWorks($table, $asc){
-        return $this -> query -> getAllFields($table, $asc);
-    }
-    
-    public function addWork($fields, $table){
+	
+	public function add($fields, $table){
         $ids = $this -> query -> getIDs($table);// массив IDs из БД перед ДОБАВЛЕНИЕМ
         
         $insData = array_pop($fields);//возр-ю последний элемент массива, его надо ДОБАВИТЬ в БД
-        
         // $fields уже без последнего нового элемента
         $tab = R::getRedBean() -> dispense( $table );// подчеркивание в названии НЕЛЬЗЯ
         
-        $tab -> title = $insData['title'];
-        
+        if($table == 'works'){
+			$tab -> title = $insData['title'];
+        }        
         $id = R::store( $tab );
         if($id){
             $this -> query -> update($fields, $table, $ids);//если добав-сь, отправ-ю на ОБНОВЛ-Е
@@ -43,76 +35,49 @@ class ManageContacts{
         }return false;
         
     }
+	
+	public function checkPost($post){// выбор той или др таблицы при разных POST запросах
+        
+        if(isset($post['savecontact'])) $this -> table = 'userdata';
+        if(isset($post['savework']) || isset($post['addwork'])) $this -> table = 'works';
+        
+        return $this -> query -> getData($post, false);// получение двумерного массива
+    }
     
     
 }
 
 $manage = new ManageContacts();
 
+if(count($_POST) != 0){
+    // проверка какая форма отправлена и получение двумерного массива
+    $data = $manage -> checkPost($_POST);
 
-if(isset($_POST['savecontact'])){
-    
-    $data = $manage -> query -> getData($_POST);
-    
     if($data){
-        if($manage -> query -> saveData($data, 'userdata'))
-            echo '<div class="suc">Личные данные сохранены!</div>';
-        else echo '<div class="err">Ошибка при сохранении!</div>';
-    }
-
-}
-
-$contacts = $manage -> getContacts('userdata','asc');
-// форматируем в красивый вид тел номер
-$contacts[0]['phone'] = $manage -> query -> phoneFormat($contacts[0]['phone']);
-
-
-
-
-
-
-if(isset($_POST['savework'])){
-    
-    $data = $manage -> query -> getData($_POST);
-    
-    if($data){
-        $res = $manage -> query -> saveData($data, 'works');
-        if($res) echo '<div class="suc">Оказываемые услуги сохранены!</div>';
-        else echo '<div class="err">Ошибка при сохранении!</div>';
+        // проверка либо только обновить, либо добавить и обновить записи
+        $res = $manage -> query -> saveData($data, $manage -> table);
+        
+        if($res) echo $manage -> query -> checkErrors($_POST, true);// успешное собщение
+        else echo $manage -> query -> checkErrors($_POST, false);// возвращает собщение ошибки
+            
         if($res === 'abc'){
-            if($manage -> addWork($data, 'works'))
-                echo '<div class="suc">Новая услуга успешно добавлена!</div>';
-            else echo '<div class="err">Ошибка при добавлении!</div>';
+            if($manage -> add($data, $manage -> table))
+                echo $manage -> query -> checkErrors($_POST, true, $res);// успешное сообщение
+            else echo $manage -> query -> checkErrors($_POST, false, $res);// собщение ошибки
         }
     }
-
 }
+
 if(isset($_GET['idwork'])){// отпр на удаление если НАЖАТА кнопка удалить
     if($manage -> query -> delete('works', $_GET['idwork']))
         echo '<div class="suc">Услуга удалёна!</div>';
 }
 
-if(isset($_POST['addwork'])){
-    $data = $manage -> query -> getData($_POST);// получение двумерного массива
-    
-    if($data){
-        if($manage -> query -> saveData($data, 'works') === 'abc'){//если true, то на вставку нов записи
-            
-        if($manage -> addWork($data, 'works'))
-            echo '<div class="suc">Новая услуга успешно добавлена!</div>';
-        else echo '<div class="err">Ошибка при добавлении!</div>';
-        }
-        $works = $manage -> getWorks('works','asc');// запрос услуг из БД
-    }else $works = $manage -> getWorks('works','asc');// запрос отзывов из БД
-}else{
-    $works = $manage -> getWorks('works','asc');// запрос услуг из БД 
-}
 
-
-
-
-
-
+$contacts = $manage -> query -> getAllFields('userdata','asc');
+// форматируем в красивый вид тел номер
+$contacts[0]['phone'] = $manage -> query -> phoneFormat($contacts[0]['phone']);
+$works = $manage -> query -> getAllFields('works','asc');// запрос услуг из БД 
 ?>
 
 <form id="formPrice" action="" method="post">

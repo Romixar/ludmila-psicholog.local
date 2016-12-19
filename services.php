@@ -17,68 +17,37 @@ class manageServices{
         $this -> query = new DB();// инициализация объектв DB
     }
     
-    public function getAllFields($table, $asc){
-        return $this -> query -> getAllFields($table, $asc);
-    }
-    
-    public function saveData($fields,$table){
-        return $this -> query -> saveData($fields,$table);
-    }
-    
-    public function saveTextData($data){
-        if(is_array($data)){// если не массив то не работает
-            if(count($this->getIDs2()) !== count($data)) $this -> addText($data);// ВСТАВИТЬ и ОБНОВИТЬ    
-            else $this -> updateText($data);// просто только обновить
-            //$this -> updateText($data);// просто только обновить
-        }
-    }
-    
-    public function add($fields,$table){
-        
-        $ids = $this -> query -> getIDs($table);// массив IDs из БД перед ДОБАВЛЕНИЕМ новой записи
+
+	public function add($fields, $table){
+        $ids = $this -> query -> getIDs($table);// массив IDs из БД перед ДОБАВЛЕНИЕМ
         
         $insData = array_pop($fields);//возр-ю последний элемент массива, его надо ДОБАВИТЬ в БД
         // $fields уже без последнего нового элемента
         $tab = R::getRedBean() -> dispense( $table );// подчеркивание в названии НЕЛЬЗЯ
-            
-        $tab -> title = $insData['title'];
-        $tab -> price = $insData['price'];
-        $tab -> duration = $insData['duration'];
-            
-        $id = R::store( $tab );
         
+        if($table == 'services'){
+			$tab -> title = $insData['title'];
+			$tab -> description = $insData['description'];
+        }else{
+            $tab -> title = $insData['title'];
+			$tab -> price = $insData['price'];
+			$tab -> duration = $insData['duration'];
+        }
+        
+        $id = R::store( $tab );
         if($id){
             $this -> query -> update($fields, $table, $ids);//если добав-сь, отправ-ю на ОБНОВЛ-Е
-            return true;
-        }return false;
-    }
-    
-    public function addText($data,$table){
-        
-        $ids = $this -> query -> getIDs($table);// массив IDs из БД перед ДОБАВЛЕНИЕМ новой записи
-        
-        $insData = array_pop($data);//возр-ю последний элемент массива, его надо ДОБАВИТЬ в БД
-        // $fields уже без последнего нового элемента
-        //$table = R::getRedBean() -> dispense( 'testServixes' );// подчеркивание в названии НЕЛЬЗЯ
-        $tab = R::getRedBean() -> dispense( $table );// подчеркивание в названии НЕЛЬЗЯ
-            
-        $tab -> title = $insData['title'];
-        $tab -> description = $insData['description'];
-        
-        $id = R::store( $tab );
-        if($id){
-            $this -> query -> update($data, $table, $ids);//если добав-сь, отправ-ю на ОБНОВЛ-Е
             return true;
         }return false;
         
     }
 
-    public function getData($data){// создание двумерного массива из полученной формы
-        return $this -> query -> getData($data);
-    }
-    
-    public function delete($table,$id){
-        return $this -> query -> delete($table,$id);
+	public function checkPost($post){// выбор той или др таблицы при разных POST запросах
+        
+        if(isset($post['saveserv']) || isset($post['addserv'])) $this -> table = 'price_table';
+        if(isset($post['savedesc']) || isset($post['adddesc'])) $this -> table = 'services';
+        
+        return $this -> query -> getData($post, false);// получение двумерного массива
     }
 
 
@@ -86,79 +55,41 @@ class manageServices{
 }
 
 $manage = new manageServices();
-// работа с таблицепй цен
-if(isset($_POST['saveserv'])){// НАЖАТА кнопка сохранить
-    $data = $manage -> getData($_POST);// получение двумерного массива
-    if($data){
-        $res = $manage -> saveData($data,'price_table');// запись в БД по нажатию на СОХРАНИТЬ
-        
-        if($res)
-            echo '<div class="suc">Таблица цен на услуги сохранена!</div>';
-        else echo '<div class="err">Ошибка при сохранении!</div>';
 
+if(count($_POST) != 0){
+    // проверка какая форма отправлена и получение двумерного массива
+    $data = $manage -> checkPost($_POST);
+
+    if($data){
+        // проверка либо только обновить, либо добавить и обновить записи
+        $res = $manage -> query -> saveData($data, $manage -> table);
+        
+        if($res) echo $manage -> query -> checkErrors($_POST, true);// успешное собщение
+        else echo $manage -> query -> checkErrors($_POST, false);// возвращает собщение ошибки
+            
         if($res === 'abc'){
-            if($manage -> add($data, 'price_table'))
-                echo '<div class="suc">Новая услуга добавлена!</div>';
-            else echo '<div class="err">Ошибка при добавлении!</div>';
+            if($manage -> add($data, $manage -> table))
+                echo $manage -> query -> checkErrors($_POST, true, $res);// успешное сообщение
+            else echo $manage -> query -> checkErrors($_POST, false, $res);// собщение ошибки
         }
     }
 }
+
+
 if(isset($_GET['id'])){// отпр на удаление если НАЖАТА кнопка удалить
-    if($manage -> delete('price_table',$_GET['id']))
+    if($manage -> query -> delete('price_table',$_GET['id']))
         echo '<div class="suc">Услуга из таблицы цен удалена</div>';
 }
-if(isset($_POST['addserv'])){// если нажата ДОБАВИТЬ УСЛУГУ
-    $data = $manage -> getData($_POST);// получение двумерн массива из формы
-    
-    if($data){
-        //если придет abc то на вставку нов записи
-        if($manage -> saveData($data, 'price_table') === 'abc'){
-            if($manage -> add($data, 'price_table'))
-                echo '<div class="suc">Новая услуга добавлена!</div>';
-            else echo '<div class="err">Ошибка при добавлении!</div>';
-        }
-        $arrPriceTab = $manage -> getAllFields('price_table', 'asc');// запрос отзывов из БД
-    }else $arrPriceTab = $manage -> getAllFields('price_table', 'asc');// запрос отзывов из БД
-}else{
-    $arrPriceTab = $manage -> getAllFields('price_table', 'asc');// список услуг загружаю из БД
-}
-// работа с описаниями услуг
-if(isset($_POST['savedesc'])){
-    $data = $manage -> getData($_POST);// получение двумерного массива
-    if($data){
-        
-        $res = $manage -> saveData($data,'services');// запись в БД по нажатию на СОХРАНИТЬ
-        
-        if($res)
-            echo '<div class="suc">Названия и описания услуг сохранены!</div>';
-        else echo '<div class="err">Ошибка при сохранении!</div>';
 
-        if($res === 'abc'){
-            if($manage -> addText($data, 'services'))
-                echo '<div class="suc">Новая услуга добавлена!</div>';
-            else echo '<div class="err">Ошибка при добавлении!</div>';
-        }
-    }
-}
 if(isset($_GET['iddesc'])){
-    if($manage -> delete('services',$_GET['iddesc']))
+    if($manage -> query -> delete('services',$_GET['iddesc']))
         echo '<div class="suc">Описание услуги удалено!</div>';
 }
-if(isset($_POST['adddesc'])){
-    $data = $manage -> getData($_POST);// получение двумерн массива из формы
-    
-    if($data){
-        if($manage -> saveData($data, 'services') === 'abc'){//если придет abc то на вставку нов записи
-            if($manage -> addText($data, 'services'))
-                echo '<div class="suc">Новая услуга добавлена!</div>';
-            else echo '<div class="err">Ошибка при добавлении!</div>';
-        }
-        $arrFullServ = $manage -> getAllFields('services', 'asc');// запрос отзывов из БД
-        
-    }else $arrFullServ = $manage -> getAllFields('services', 'asc');// запрос отзывов из БД
-}else{
-    $arrFullServ = $manage -> getAllFields('services', 'asc');//получаю список услуг с описанием
-}
+
+
+$arrPriceTab = $manage -> query -> getAllFields('price_table', 'asc');// запрос отзывов из БД
+$arrFullServ = $manage -> query -> getAllFields('services', 'asc');// запрос видеороликов из БД
+
 ?>
 <form id="formPrice" action="" method="post">
             <table>

@@ -22,6 +22,7 @@ class DB{
         return R::findOne($table, "$field = ?", array($val));
     }
     
+	// Работа с REDBeanPHP https://www.sitepoint.com/introduction-redbean/
     public function getAllFields($table, $asc){// запрос и получение всего массива из таблицы БД
         //return R::getAll('SELECT * FROM testServixes WHERE view_main = ? ', [ 0 ]);
         return R::getAll('SELECT * FROM `'.$table.'` ORDER BY id '.$asc);
@@ -252,6 +253,48 @@ class DB{
             if($suc && $res === 'abc') return '<div class="suc">Новый отзыв успешно добавлен!</div>';
             //else return '<div class="err">Ошибка при добавлении!</div>';
         }
+		
+		
+		
+		if(isset($post['saveserv'])){
+            if($suc && $res !== 'abc') return '<div class="suc">Таблица цен на услуги сохранена!</div>';
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            if(!$suc && $res !== 'abc') return '<div class="err">Ошибка при сохраненении!</div>';
+        }
+        if(isset($post['addserv'])){
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            //else return '<div class="err">Ошибка при добавлении!</div>';
+        }
+        if(isset($post['savedesc'])){
+            if($suc && $res !== 'abc') return '<div class="suc">Названия и описания услуг сохранены!</div>';
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            if(!$suc && $res !== 'abc') return '<div class="err">Ошибка при сохраненении!</div>';
+        }
+        if(isset($post['adddesc'])){
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            //else return '<div class="err">Ошибка при добавлении!</div>';
+        }
+		
+		
+		if(isset($post['savecontact'])){
+            if($suc && $res !== 'abc') return '<div class="suc">Личные данные сохранены!</div>';
+            //if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            if(!$suc && $res !== 'abc') return '<div class="err">Ошибка при сохраненении!</div>';
+        }
+        //if(isset($post['addserv'])){
+            //if($suc && $res === 'abc') return '<div class="suc">Новая услуга добавлена!</div>';
+            //else return '<div class="err">Ошибка при добавлении!</div>';
+        //}
+        if(isset($post['savework'])){
+            if($suc && $res !== 'abc') return '<div class="suc">Оказываемые услуги сохранены!</div>';
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга успешно добавлена!</div>';
+            if(!$suc && $res !== 'abc') return '<div class="err">Ошибка при сохраненении!</div>';
+        }
+        if(isset($post['addwork'])){
+            if($suc && $res === 'abc') return '<div class="suc">Новая услуга успешно добавлена!</div>';
+            //else return '<div class="err">Ошибка при добавлении!</div>';
+        }
+		
         
         
         

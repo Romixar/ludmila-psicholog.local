@@ -491,48 +491,6 @@ abstract class HTMLPage extends RedBean_SimpleModel{// подключение к
                 </div>
             </div>
         </div><!--   END ROW     -->
-
-<!--
-        <div class="row">
-        	<div class="templatemo_home_bot shadow">
-            	<div class="col-md-12 gradient padd-top20">
-               
-                <div class="col-md-2">
-                	<img src="images/templatemo_home_img1.jpg" alt="templatemo home image">
-                </div>
-                <div class="col-md-4">
-                <div class="templatemo_home_botheader">ENEAN SOLCITUD</div>
-                <div class="templatemo_home_botsubheader">DUIS SED ODIO SIT AMET NIBH</div>
-                Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet.
-				</div>
-               
-                <div class="col-md-2"><img src="images/templatemo_home_img2.jpg" alt="templatemo home image"></div>
-                <div class="col-md-4">
-                <div class="templatemo_home_botheader">MAURIS LUCTUS</div>
-                <div class="templatemo_home_botsubheader">AENEAN ELIT TURPIS</div>
-                Praesent nunc tellus, laoreet sit amet, viverra sed, dictum semper, odio. Nunc malesuada. Ut lacinia euismod nunc. Mauris velit. 
-				</div>
-                <div class="clear"></div>
-                <div class="col-md-2">
-                	<img src="images/templatemo_home_img3.jpg" alt="templatemo home image">
-                </div>
-                <div class="col-md-4">
-                <div class="templatemo_home_botheader">AENEAN SAPINE</div>
-                <div class="templatemo_home_botsubheader">DUIS SED ODIO SIT AMET NIBH</div>
-                Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet.
-				</div>
-                <div class="col-md-2"><img src="images/templatemo_home_img4.jpg" alt="templatemo home image"></div>
-                <div class="col-md-4">
-                <div class="templatemo_home_botheader">VESTIBULUM ANTE IPSUM</div>
-                <div class="templatemo_home_botsubheader">AENEAN ELIT TURPIS</div>
-                Praesent nunc tellus, laoreet sit amet, viverra sed, dictum semper, odio. Nunc malesuada. Ut lacinia euismod nunc. Mauris velit. 
-				</div>
-                </div>
-            </div>
-        </div>
--->
-        
-    
         
    </div>
    </div><!-- homepage end -->
