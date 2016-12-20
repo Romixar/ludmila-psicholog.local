@@ -103,7 +103,7 @@ $db = new DB();
 
 //$res = $db -> update('price_table', ['`title` = "проверка_000"','`price` = 123'], [':id' => 59]);
 
-$res = $db -> insert('price_table', ['`title`' => 'КРУТТООООО!','`price`' => 3210.63]);
+//$res = $db -> insert('price_table', ['`title`' => 'КРУТТООООО!','`price`' => 3210.63]);
 
 print_r($res);die;
 

@@ -8,6 +8,13 @@ class Config{
     const DIR_IMG = '/images/gallery/';
     
     const MAX_FILE_SIZE = 5000000;// в байтах (5 Mb)
+	
+	
+	
+	const DB_HOST = 'localhost';
+	const DB_NAME = 'psicholog-ludmila';
+	const DB_USER = 'root';
+	const DB_PASS = '';
     
     
     
