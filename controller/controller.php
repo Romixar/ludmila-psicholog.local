@@ -1,9 +1,11 @@
 <?php
 
+require_once '../model/services.php';
+
 class Controller{
 	
 	public $data = [];// POST GET параметры от пользователя
-	public $class = '';// имя класса, который к нам обращается
+	//public $class = '';// имя класса, который к нам обращается
 	
 	
 	
@@ -12,8 +14,8 @@ class Controller{
 		if(!empty($_POST)){
 			
 			$data = $this -> xss($_POST);// отправляю на проверку
-			$this -> data = $this -> getObj($data);// создание двумерного массива
-			$this -> class = static::$class;// получаю название класса, который вызывает конструктора
+			//$this -> data = $this -> getObj($data);// создание двумерного массива
+			//$this -> class = static::$class;// получаю название класса, который вызывает конструктора
 			
 		}
 		
@@ -43,15 +45,10 @@ class Controller{
 		
 	}
 	
-	
-	public function getObj($data){
+	public function actionAll(){// возвращаю все записи в таблице
 		
-		
-		
-		
-		
-		
-		
+		$serv = new Services();
+		$serv -> selectAll();
 	}
 	
 	
@@ -60,5 +57,23 @@ class Controller{
 	
 	
 	
+	
+	
 }
+
+$ctrl = new Controller();
+$ctrl -> actionAll();
+
+
+
+
+
+
+
+
+
+
+
+
+
     
