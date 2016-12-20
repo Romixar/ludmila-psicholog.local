@@ -17,7 +17,7 @@ class DB{
 	private $dbh;// объект подключения к БД
 	private $class = 'stdClass';// здесь будет имя класс, который вызывает данный
 	protected static $table;// название таблицы в каждом дочернем классе
-	protected $data = [];// здесь будут счвойства дочерних объектов (поля таблицы)
+	public $data = [];// здесь будут счвойства дочерних объектов (поля таблицы)
 	
 	
 	
@@ -68,8 +68,8 @@ class DB{
 		
 		$sql = 'SELECT * FROM '.static::$table;
 		
-		//return $this -> query($sql);
-		var_dump($this -> query($sql));
+		return $this -> query($sql);
+		//var_dump($this -> query($sql));
 	}
 	
 	

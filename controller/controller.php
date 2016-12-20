@@ -1,6 +1,7 @@
 <?php
 
 require_once '../model/services.php';
+require_once '../view/view.php';
 
 class Controller{
 	
@@ -48,7 +49,32 @@ class Controller{
 	public function actionAll(){// возвращаю все записи в таблице
 		
 		$serv = new Services();
-		$serv -> selectAll();
+		$items = $serv -> selectAll();// получаем из модели массив объектов строк таблицы БД
+		
+		$view = new View();
+        
+		//var_dump($items);die;
+		
+		for($i=0; $i<count($items); $i++){// создаю внутренний двумерный массив объекта view
+			
+			$view -> data[$i] = $items[$i] -> data;
+			
+		//foreach($items -> data as $k => $v){
+				
+			//$view -> $k = $v;
+				//var_dump($view -> $k);
+		}
+		
+		//$view -> data = $items -> data;
+
+		
+			
+			//var_dump($view);
+			//die;
+		//}
+		
+        
+        $view -> display('serv');// отправляю во view
 	}
 	
 	
