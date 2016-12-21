@@ -1,7 +1,7 @@
 <?php
 
-require_once '../model/services.php';
-require_once '../view/view.php';
+//require_once '../model/services.php';
+//require_once '../view/view.php';
 
 class Controller{
 	
@@ -14,9 +14,17 @@ class Controller{
 		
 		if(!empty($_POST)){
 			
-			$data = $this -> xss($_POST);// отправляю на проверку
+			
+			$this -> xss($_POST);// отправляю на проверку
 			//$this -> data = $this -> getObj($data);// создание двумерного массива
 			//$this -> class = static::$class;// получаю название класса, который вызывает конструктора
+			
+		}
+		if(!empty($_GET)){// открытие опред-й страницы
+			if($_GET['ctrl'] == 1) $this -> getMainPage();//запуск контроллера для страницы ГЛАВНАЯ
+			if($_GET['ctrl'] == 2) $this -> getAbout();//запуск контроллера для страницы УСЛУГИ
+			if($_GET['ctrl'] == 3) $this -> getServices();//запуск контроллера для страницы УСЛУГИ
+			if($_GET['ctrl'] == 4) $this -> getContacts();//запуск контроллера для страницы КОНТАКТЫ
 			
 		}
 		
@@ -27,54 +35,105 @@ class Controller{
 	public function xss($data){
 		
 		if(is_array($data)){
+			$req = '/script|http|www\.|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
 			
-			for($i=0; $i<count($data); $i++){
+			foreach($data as  $key => $val){
 				
-				$data[$i] = trim($data[$i]);//очистка от пробелов
-				//замена опасных слов пустой строкой
-				$req = '/script|http|www\.|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
-				$data[$i] = preg_replace($req,'',$data[$i]);
+				$val = trim($val);//очистка от пробелов
 				
-				if($flag) $data[] = htmlspecialchars($data[$i]); //замена всех HTML тегов на HTML сущности
+				$val = preg_replace($req,'',$val);
 				
-				$data[] = strip_tags($data[$i]); //удаление всех HTML тегов
-				
+				$data[$key] = strip_tags($val); //удаление всех HTML тегов
+			
 			}
-			return $data;// возварщаю провереный массив
+			
+			$this -> getData($data);// отправляю провереный массив на создание двумерного
 		}
 		return false;
 		
 	}
 	
-	public function actionAll(){// возвращаю все записи в таблице
+	public function getData($data){// получение двумерного массива
 		
-		$serv = new Services();
-		$items = $serv -> selectAll();// получаем из модели массив объектов строк таблицы БД
+		$newdata = [];
 		
+		foreach($data as $key => $val){
+				
+			if($pos = strpos($key,'_')){
+				$num = substr($key,$pos+1);// взять номер поля
+				$newdata[$num][substr($key,0,$pos)] = $val;// делать эл-т под этим номером
+			}else
+				$newdata[$key] = $val;// кнопка с какой формы пришел массив
+		}
+		print_r($newdata);die;
+		
+		$this -> save($newdata);
+		
+	}
+	
+	public function getServices(){// возвращаю все записи в таблице
+		
+		$pr = new Prices();
+		$prices = $pr -> selectAll();// получаю таблицу цен
 		$view = new View();
-        
-		//var_dump($items);die;
+		for($i=0; $i<count($prices); $i++){// создаю внутренний двумерный массив объекта view
+			
+			$view -> data[$i] = $prices[$i] -> data;
+			
+		}
 		
+		$view -> display('price');// отправляю во view
+		
+		
+		$serv = new Services();// получаю таблицу Описания услуг
+		$items = $serv -> selectAll();// получаем из модели массив объектов строк таблицы БД
+		$view = new View();   
 		for($i=0; $i<count($items); $i++){// создаю внутренний двумерный массив объекта view
 			
 			$view -> data[$i] = $items[$i] -> data;
 			
-		//foreach($items -> data as $k => $v){
-				
-			//$view -> $k = $v;
-				//var_dump($view -> $k);
 		}
 		
-		//$view -> data = $items -> data;
-
-		
-			
-			//var_dump($view);
-			//die;
-		//}
-		
-        
         $view -> display('serv');// отправляю во view
+
+	}
+	
+	public function getContacts(){
+		
+		$wor = new Works();
+		$works = $wor -> SelectAll();
+		
+		$view = new View();
+		for($i=0; $i<count($works); $i++){
+			
+			$view -> data[$i] = $works[$i] -> data;
+			
+		}
+		$view -> display('work');// отправляю во view
+		
+		
+		$con = new Contacts();
+		$contacts = $con -> SelectAll();
+		
+		$view = new View();
+		
+		$view -> data = $contacts;
+		$view -> display('contact');// отправляю во view
+		
+		
+	}
+	
+	public function getMainPage(){
+		
+		
+		echo 'открою скоро ГЛАВНАЯ!';
+		
+	}
+	
+	public function getAbout(){
+		
+		echo 'открою скоро ОБО МНЕ!';
+		
 	}
 	
 	
@@ -87,8 +146,7 @@ class Controller{
 	
 }
 
-$ctrl = new Controller();
-$ctrl -> actionAll();
+
 
 
 

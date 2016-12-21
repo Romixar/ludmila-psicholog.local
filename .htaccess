@@ -1,0 +1,32 @@
+AddDefaultCharset UTF-8
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
+
+#RewriteEngine On
+# САЙТ БУДЕТ Без www
+#RewriteCond %{HTTP_HOST} ^www.ludmila-psicholog.ru$ [NC]
+#RewriteRule ^(.*)$ http://ludmila-psicholog.ru/$1 [R=301,L]
+
+# Перенаправление на одну и ту же страницу, при / в конце URL или без него
+#RewriteBase /
+# Условие по которому происх-т перенапр-е
+#RewriteCond %{HTTP_HOST} (.*)
+#RewriteCond %{REQUEST_URI} /$ [NC]
+#RewriteCond %{REQUEST_FILENAME} !-d
+# Правило перенапр-я 301-м редиректом
+#RewriteRule ^(.*)(/)$ $1 [R=301,L]
+
+# Запрет просмотра директорий напрямую
+#Options -Indexes
+# Запрет SSI (получение страницы по частям)
+#Options -Includes
+# Направление запросов несущ-х страниц на index.php
+#Options +FollowSymlinks
+# Проверка, что она не является директорией
+#RewriteCond %{REQUEST_FILENAME} !-d
+# Проверка, что она не является файлом
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^(.*) ./?%{QUERY_STRING}

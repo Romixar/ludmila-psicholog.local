@@ -1,7 +1,7 @@
 <?php
 
 //require 'rb.php';// подключение RedBeanPHP библиотеки
-require '../config.php';// подключение кофигурационного файла
+//require '../config.php';// подключение кофигурационного файла
 
 //if($config::HOST_ADDRESS == 'http://ludmila-psicholog.local/')//выбор БД к которой подключиться
     //R::setup( 'mysql:host=localhost;dbname=psicholog-ludmila','root', '' );
