@@ -41,16 +41,19 @@ class DB{
 			//return $sth -> fetch(PDO::FETCH_OBJ);// возвращаю результат в ввиде объекта std
 			//return $sth -> fetchObject($this -> class);// возвращаю результат в ввиде объекта нужного класса
 			return $sth -> fetchAll(PDO::FETCH_CLASS, $this -> class);// возвращает объект
+			//return $sth -> fetch(PDO::FETCH_LAZY);// возвращает объект
 			//return $sth -> fetchAll();// возвращает массив
 		} 
 		else {// выборка из базы по ключу 
 			
 			$sth = $this -> dbh -> prepare($sql);
+			
 			$sth -> execute($params);// отправляю на исполнение
 			
 			if($ins) return $this -> dbh -> lastInsertId();
 			
 			return $sth -> fetchObject($this -> class);// возвращаю масив результат
+			//return $sth -> fetch();// возвращаю масив результат
 			
 		}
 		
@@ -62,11 +65,19 @@ class DB{
 	
 	
 	
-	
+	public function countRow(){// узнать сколько записей в таблице БД
+		
+		$sql = 'SELECT COUNT(*) FROM `'.static::$table.'`';
+		
+		$sth = $this -> dbh -> query($sql);// исполнение простого запроса
+		
+		return $sth -> fetch()[0];// получаю массив с ответом
+		
+	}
 	
 	public function selectAll(){
 		
-		$sql = 'SELECT * FROM '.static::$table;
+		$sql = 'SELECT * FROM `'.static::$table.'`';
 		
 		return $this -> query($sql);
 		//var_dump($this -> query($sql));
@@ -76,6 +87,10 @@ class DB{
 	public function update($data, $params){
 		
 		$sql = 'UPDATE `'.static::$table.'` SET '.implode(', ',$data).' WHERE `id` = :id';
+		
+		echo $sql.'<br/>';
+		print_r($params);
+
 		return $this -> query($sql, $params);
 		
 	}
@@ -96,7 +111,9 @@ class DB{
 		}
 		
 		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES ('.implode(', ',$vals).')';
-		
+
+		echo $sql.'<br/>';
+		print_r($params);
 		return $this -> query($sql, $params, true);
 		
 	}
@@ -127,7 +144,7 @@ class DB{
 
 //$res = $db -> select('SELECT * FROM `price_table` WHERE `id` = :id', [':id' => 3]);
 
-//$res = $db -> update('price_table', ['`title` = "проверка_000"','`price` = 123'], [':id' => 59]);
+//$res = $db -> update(['`title` = "проверка_000"','`price` = 123'], [':id' => 59]);
 
 //$res = $db -> insert('price_table', ['`title`' => 'КРУТТООООО!','`price`' => 3210.63]);
 

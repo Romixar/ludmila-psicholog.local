@@ -35,7 +35,7 @@ class Controller{
 	public function xss($data){
 		
 		if(is_array($data)){
-			$req = '/script|http|www\.|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
+			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
 			
 			foreach($data as  $key => $val){
 				
@@ -65,10 +65,90 @@ class Controller{
 			}else
 				$newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
-		print_r($newdata);die;
-		
+
 		$this -> save($newdata);
 		
+	}
+	
+	public function save($data){// определим добавить в БД или только обновить
+		
+		$keys = array_keys($data);
+		
+		$action = array_pop($keys);
+		
+		switch($action){
+			case 'savework': $wor = new Works();
+			break;
+			case 'addwork': $wor = new Works();
+			break;
+			case 'savecontact': echo 'savecontact';
+			break;
+			case 'saveserv': echo 'saveserv';
+			break;
+			case 'addserv': echo 'addserv';
+			break;
+			case 'savedesc': echo 'savedesc';
+			break;
+			case 'adddesc': echo 'adddesc';
+			break;
+			
+			
+			
+		}
+		array_pop($data);// избавляюсь от послед эл-та (кнопки отправления формы)
+		
+		$count = $wor -> countRow();// запрос кол-ва записей в БД
+		
+		if($count == count($data)){
+			
+			$this -> update($data);
+
+			// for($i=0; $i<(count($data)-1); $i++){
+				// $arr = []; // массив для строки таблицы БД
+				// $params = []; // здесь будут параметры для подстановки
+				// foreach($data[$i] as $key => $val){
+					
+					// if(is_numeric($val)) $arr[] = '`'.$key.'` = '.$val;// если число то без кавычек
+					// else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
+					
+					// if($key == 'id') $params[':id'] = $val;
+
+				// }
+				// $wor -> update($arr, $params);
+
+			//}
+
+		}else{
+			$up_data = array_slice($data, 0, count($data)-1);// без одного последних элементов
+			$this -> update($up_data);// на обновление
+			
+			$ins_data = $data[count($data) - 1];//последний элмент отправляю на вставку
+			if($wor -> insert($ins_data)) return true;
+			else return false;
+		}
+	}
+	
+	public function update($data){
+		
+		$wor = new Works();
+		
+		for($i=0; $i<(count($data)); $i++){
+			$arr = []; // массив для строки таблицы БД
+			$params = []; // здесь будут параметры для подстановки
+			foreach($data[$i] as $key => $val){
+				
+				if($key == 'id') $params[':id'] = $val;
+				else{// чтобы поле id не прописывалось в запрос
+					if(is_numeric($val)) $arr[] = '`'.$key.'` = '.$val;// если число то без кавычек
+					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
+				}
+				
+				
+					
+			}
+			
+			$wor -> update($arr, $params);
+		}
 	}
 	
 	public function getServices(){// возвращаю все записи в таблице

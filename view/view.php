@@ -14,7 +14,6 @@ class View{
 			
 		}
 		
-		
 		ob_start();
 		include $tmpl.'.php';
 		$content = ob_get_contents();

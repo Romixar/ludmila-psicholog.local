@@ -18,7 +18,9 @@
                     <tr>
                        
                         <td>
-                            <input class="inptitledesc" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
+                            <input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
+							<input class="inptitledesc" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
+							
                         </td>
                         <td>
                             <a href="<?= Config::HOST_ADDRESS ?>?ctrl=4&idwork=<?= $this->data[$i]['id'] ?>">Удалить</a>
