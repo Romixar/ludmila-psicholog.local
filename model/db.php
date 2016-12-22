@@ -91,7 +91,7 @@ class DB{
 		echo $sql.'<br/>';
 		print_r($params);
 
-		return $this -> query($sql, $params);
+		//return $this -> query($sql, $params);
 		
 	}
 	
@@ -114,7 +114,7 @@ class DB{
 
 		echo $sql.'<br/>';
 		print_r($params);
-		return $this -> query($sql, $params, true);
+		//return $this -> query($sql, $params, true);
 		
 	}
 	

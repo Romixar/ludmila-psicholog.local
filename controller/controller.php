@@ -7,6 +7,7 @@ class Controller{
 	
 	public $data = [];// POST GET параметры от пользователя
 	//public $class = '';// имя класса, который к нам обращается
+	public $cl; // будет экземпляр класса нужной подмодели
 	
 	
 	
@@ -20,13 +21,13 @@ class Controller{
 			//$this -> class = static::$class;// получаю название класса, который вызывает конструктора
 			
 		}
-		if(!empty($_GET)){// открытие опред-й страницы
-			if($_GET['ctrl'] == 1) $this -> getMainPage();//запуск контроллера для страницы ГЛАВНАЯ
-			if($_GET['ctrl'] == 2) $this -> getAbout();//запуск контроллера для страницы УСЛУГИ
-			if($_GET['ctrl'] == 3) $this -> getServices();//запуск контроллера для страницы УСЛУГИ
-			if($_GET['ctrl'] == 4) $this -> getContacts();//запуск контроллера для страницы КОНТАКТЫ
+		//if(!empty($_GET)){// открытие опред-й страницы
+			//if($_GET['ctrl'] == 1) $this -> getMainPage();//запуск контроллера для страницы ГЛАВНАЯ
+			//if($_GET['ctrl'] == 2) $this -> getAbout();//запуск контроллера для страницы УСЛУГИ
+			//if($_GET['ctrl'] == 3) $this -> getServices();//запуск контроллера для страницы УСЛУГИ
+			//if($_GET['ctrl'] == 4) $this -> getContacts();//запуск контроллера для страницы КОНТАКТЫ
 			
-		}
+		//}
 		
 		
 	}
@@ -70,67 +71,56 @@ class Controller{
 		
 	}
 	
-	public function save($data){// определим добавить в БД или только обновить
+	public function selectAction($data){
 		
 		$keys = array_keys($data);
-		
-		$action = array_pop($keys);
+		$action = array_pop($keys);// получаю ключ кнопки отправить
 		
 		switch($action){
-			case 'savework': $wor = new Works();
+			case 'savework':
+			case 'addwork': $this -> cl = new Works();
 			break;
-			case 'addwork': $wor = new Works();
+			case 'savecontact': $this -> cl = new Contacts();// подмодель для страницы КОНТАКТЫ
 			break;
-			case 'savecontact': echo 'savecontact';
+			case 'saveserv':
+			case 'addserv': $this -> cl = new Prices();
 			break;
-			case 'saveserv': echo 'saveserv';
+			case 'savedesc':
+			case 'adddesc': $this -> cl = new Services();// подмодель для страницы УСЛУГИ
 			break;
-			case 'addserv': echo 'addserv';
+			case 'savevid':
+			case 'addvid': $this -> cl = new Videos();
 			break;
-			case 'savedesc': echo 'savedesc';
+			case 'savetestmon':
+			case 'addtestmon': $this -> cl = new Testmonials();// подмодель для страницы ГЛАВНАЯ
 			break;
-			case 'adddesc': echo 'adddesc';
-			break;
-			
-			
-			
 		}
+		
+	}
+	
+	public function save($data){// определим добавить в БД или только обновить
+
+		$this -> selectAction($data);
+		
 		array_pop($data);// избавляюсь от послед эл-та (кнопки отправления формы)
 		
-		$count = $wor -> countRow();// запрос кол-ва записей в БД
+		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
 		
 		if($count == count($data)){
 			
-			$this -> update($data);
-
-			// for($i=0; $i<(count($data)-1); $i++){
-				// $arr = []; // массив для строки таблицы БД
-				// $params = []; // здесь будут параметры для подстановки
-				// foreach($data[$i] as $key => $val){
-					
-					// if(is_numeric($val)) $arr[] = '`'.$key.'` = '.$val;// если число то без кавычек
-					// else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
-					
-					// if($key == 'id') $params[':id'] = $val;
-
-				// }
-				// $wor -> update($arr, $params);
-
-			//}
+			$this -> update($data);// отправляю на обновление
 
 		}else{
-			$up_data = array_slice($data, 0, count($data)-1);// без одного последних элементов
+			$up_data = array_slice($data, 0, count($data)-1);// без одного последнего элемента
 			$this -> update($up_data);// на обновление
 			
 			$ins_data = $data[count($data) - 1];//последний элмент отправляю на вставку
-			if($wor -> insert($ins_data)) return true;
+			if($this -> cl -> insert($ins_data)) return true;
 			else return false;
 		}
 	}
 	
 	public function update($data){
-		
-		$wor = new Works();
 		
 		for($i=0; $i<(count($data)); $i++){
 			$arr = []; // массив для строки таблицы БД
@@ -142,12 +132,8 @@ class Controller{
 					if(is_numeric($val)) $arr[] = '`'.$key.'` = '.$val;// если число то без кавычек
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
-				
-				
-					
 			}
-			
-			$wor -> update($arr, $params);
+			$this -> cl -> update($arr, $params);
 		}
 	}
 	

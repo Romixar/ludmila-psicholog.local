@@ -15,6 +15,15 @@ class Config{
 	const DB_NAME = 'psicholog-ludmila';
 	const DB_USER = 'root';
 	const DB_PASS = '';
+	
+	public static $routes = [// маршруты с названиями контроллеров для каждой страницы
+		
+		'ctrl=1' => 'main/all',
+		'ctrl=2' => 'about/all',
+		'ctrl=3' => 'services/all',
+		'ctrl=4' => 'contacts/all',
+	
+	];
     
     
     
