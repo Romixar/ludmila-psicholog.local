@@ -2,21 +2,16 @@
 
 
 class MainController extends Controller{
-
-
-
-	public function actionAll(){
-		
-		echo 'попал сюды!';die;
-		
-		$pr = new Prices();
-		
-		$res = $pr -> selectAll();
-		
-		var_dump($res);
-		die;
-		
+	
+	public $arr = [];// массив для объектов
+	
+	public function __construct(){
+		$pr = new Prices(); // инициализирую подмодель таблицы цен и услуг
+		$serv = new Services();
+		parent::__construct($this -> arr = [$pr,$serv]);// отправляю в родит-й конструктор эти объекты
 	}
+
+
 
 
 

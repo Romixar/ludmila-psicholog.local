@@ -21,12 +21,12 @@ class Router{
 				if($ctrl == $key){
 					$arr = explode('/',$val);// получаю массив из имени КОНТРОЛЛЕРА и его МЕТОДА
 					
-					$ctrl_name = ucfirst($arr[0].'Controller');
+					$ctrl_name = $arr[0].'controller';
 					$method = 'action'.ucfirst($arr[1]);	
 				}			
 			}
 		}else{
-			$ctrl_name = 'MainController';// запуск контроллера по умолчанию
+			$ctrl_name = 'maincontroller';// запуск контроллера по умолчанию
 			$method = 'actionAll';
 		}
 		
@@ -39,7 +39,7 @@ class Router{
 		$this -> checkURL($ctrl_name, $method);
 		
 		$cont = new $ctrl_name();// запуск выбранного контроллера и его метода
-		$cont -> $method;
+		$cont -> $method();
 			
 		//echo 'контроллер - '.$ctrl_name.'<br/>';
 		//echo 'метод - '.$method.'<br/>';

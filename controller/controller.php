@@ -189,6 +189,29 @@ class Controller{
 		
 	}
 	
+	public function actionAll(){
+		
+		$view = new View();
+		
+		for($i=0; $i<count($this -> arr); $i++){
+			
+			$arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
+			$tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
+
+			$view -> data = [];// передачалом второй итерации обнуляю
+			
+			for($j=0; $j<count($arrObj); $j++){
+				
+				$view -> data[$j] = $arrObj[$j] -> data;
+				
+			}
+			
+			$view -> display($tmpl);// отправляю во view
+
+		}
+		
+	}
+	
 	public function getMainPage(){
 		
 		
