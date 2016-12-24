@@ -36,7 +36,7 @@
                     }
                 ?>
                 <?php
-                    if(isset($_POST['addserv'])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if(isset($_POST['add-prices'])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($this->data);// номер для имени поля
                     ?>
                         <tr>
@@ -59,6 +59,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="addserv" value="Добавить новую услугу">
-       <input class="buttsave" type="submit" name="saveserv" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-prices" value="Добавить новую услугу">
+       <input class="buttsave" type="submit" name="save-prices" value="Сохранить изменения">
 </form>

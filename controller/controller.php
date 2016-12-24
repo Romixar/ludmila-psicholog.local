@@ -7,7 +7,9 @@ class Controller{
 	
 	public $data = [];// POST GET параметры от пользователя
 	//public $class = '';// имя класса, который к нам обращается
-	public $cl; // будет экземпляр класса нужной подмодели
+	public $cl; // будет экземпляр класса нужной подмодели при получении POST
+	
+	public $arr = [];// массив для экземплчяров объектов подмоделей и их названий шаблона
 	
 	
 	
@@ -18,17 +20,9 @@ class Controller{
 			
 			$this -> xss($_POST);// отправляю на проверку
 			//$this -> data = $this -> getObj($data);// создание двумерного массива
-			//$this -> class = static::$class;// получаю название класса, который вызывает конструктора
+			//$this -> cl = static::$class;// получаю класс, который вызывает конструктор при выводе
 			
 		}
-		//if(!empty($_GET)){// открытие опред-й страницы
-			//if($_GET['ctrl'] == 1) $this -> getMainPage();//запуск контроллера для страницы ГЛАВНАЯ
-			//if($_GET['ctrl'] == 2) $this -> getAbout();//запуск контроллера для страницы УСЛУГИ
-			//if($_GET['ctrl'] == 3) $this -> getServices();//запуск контроллера для страницы УСЛУГИ
-			//if($_GET['ctrl'] == 4) $this -> getContacts();//запуск контроллера для страницы КОНТАКТЫ
-			
-		//}
-		
 		
 	}
 	
@@ -67,45 +61,26 @@ class Controller{
 				$newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
 
-		$this -> save($newdata);
+		$this -> save($newdata);// определит на UPDATE или INSERT идут данные
 		
 	}
 	
-	public function selectAction($data){
+	private function selectAction($data){
 		
-		$keys = array_keys($data);
-		$action = array_pop($keys);// получаю ключ кнопки отправить
-		
-		switch($action){
-			case 'savework':
-			case 'addwork': $this -> cl = new Works();
-			break;
-			case 'savecontact': $this -> cl = new Contacts();// подмодель для страницы КОНТАКТЫ
-			break;
-			case 'saveserv':
-			case 'addserv': $this -> cl = new Prices();
-			break;
-			case 'savedesc':
-			case 'adddesc': $this -> cl = new Services();// подмодель для страницы УСЛУГИ
-			break;
-			case 'savevid':
-			case 'addvid': $this -> cl = new Videos();
-			break;
-			case 'savetestmon':
-			case 'addtestmon': $this -> cl = new Testmonials();// подмодель для страницы ГЛАВНАЯ
-			break;
-		}
-		
+		$keys = array_keys($data);// получить послед элемент
+		$clname = explode('-',array_pop($keys));// получаю ключ кнопки отправить
+		$this -> cl = new $clname[1]();//беру элемент после дефиса - это название класса, кот-й запустить
+	
 	}
+		
 	
 	public function save($data){// определим добавить в БД или только обновить
-
+	
 		$this -> selectAction($data);
-		
 		array_pop($data);// избавляюсь от послед эл-та (кнопки отправления формы)
 		
 		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
-		
+
 		if($count == count($data)){
 			
 			$this -> update($data);// отправляю на обновление
@@ -114,7 +89,7 @@ class Controller{
 			$up_data = array_slice($data, 0, count($data)-1);// без одного последнего элемента
 			$this -> update($up_data);// на обновление
 			
-			$ins_data = $data[count($data) - 1];//последний элмент отправляю на вставку
+			$ins_data = $data[count($data) - 1];//а последний элмент отправляю на вставку
 			if($this -> cl -> insert($ins_data)) return true;
 			else return false;
 		}
@@ -123,8 +98,10 @@ class Controller{
 	public function update($data){
 		
 		for($i=0; $i<(count($data)); $i++){
-			$arr = []; // массив для строки таблицы БД
+			
+			$arr = []; // массив для строки данных для запроса к БД
 			$params = []; // здесь будут параметры для подстановки
+			
 			foreach($data[$i] as $key => $val){
 				
 				if($key == 'id') $params[':id'] = $val;
@@ -133,61 +110,12 @@ class Controller{
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
 			}
+			
 			$this -> cl -> update($arr, $params);
 		}
 	}
 	
-	public function getServices(){// возвращаю все записи в таблице
-		
-		$pr = new Prices();
-		$prices = $pr -> selectAll();// получаю таблицу цен
-		$view = new View();
-		for($i=0; $i<count($prices); $i++){// создаю внутренний двумерный массив объекта view
-			
-			$view -> data[$i] = $prices[$i] -> data;
-			
-		}
-		
-		$view -> display('price');// отправляю во view
-		
-		
-		$serv = new Services();// получаю таблицу Описания услуг
-		$items = $serv -> selectAll();// получаем из модели массив объектов строк таблицы БД
-		$view = new View();   
-		for($i=0; $i<count($items); $i++){// создаю внутренний двумерный массив объекта view
-			
-			$view -> data[$i] = $items[$i] -> data;
-			
-		}
-		
-        $view -> display('serv');// отправляю во view
-
-	}
 	
-	public function getContacts(){
-		
-		$wor = new Works();
-		$works = $wor -> SelectAll();
-		
-		$view = new View();
-		for($i=0; $i<count($works); $i++){
-			
-			$view -> data[$i] = $works[$i] -> data;
-			
-		}
-		$view -> display('work');// отправляю во view
-		
-		
-		$con = new Contacts();
-		$contacts = $con -> SelectAll();
-		
-		$view = new View();
-		
-		$view -> data = $contacts;
-		$view -> display('contact');// отправляю во view
-		
-		
-	}
 	
 	public function actionAll(){
 		
@@ -198,7 +126,7 @@ class Controller{
 			$arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
 			$tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
 
-			$view -> data = [];// передачалом второй итерации обнуляю
+			$view -> data = [];// перед началом второй итерации обнуляю
 			
 			for($j=0; $j<count($arrObj); $j++){
 				
@@ -206,24 +134,13 @@ class Controller{
 				
 			}
 			
+			//var_dump($view -> data);//die;
 			$view -> display($tmpl);// отправляю во view
 
 		}
 		
 	}
 	
-	public function getMainPage(){
-		
-		
-		echo 'открою скоро ГЛАВНАЯ!';
-		
-	}
-	
-	public function getAbout(){
-		
-		echo 'открою скоро ОБО МНЕ!';
-		
-	}
 	
 	
 	

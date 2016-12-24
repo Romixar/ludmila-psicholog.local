@@ -31,7 +31,7 @@
                 <?php
                     }
                     //}
-                    if(isset($_POST['addwork'])){
+                    if(isset($_POST['add-works'])){
                         $i = count($this->data);// количество элементов
                 ?>
                         <tr> 
@@ -54,6 +54,6 @@
                     </tr>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="addwork" value="Добавить новую услугу">
-       <input class="buttsave" type="submit" name="savework" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-works" value="Добавить новую услугу">
+       <input class="buttsave" type="submit" name="save-works" value="Сохранить изменения">
 </form>

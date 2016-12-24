@@ -6,13 +6,14 @@ class View{
 	
 	private function render($tmpl){// подготовить но не выводить view
 		
-		if(count($this -> data) == 1){// значит одномерный массив
+		// если $this -> data - массив объектов
+		//if(count($this -> data) == 1){// значит одномерный массив
 			
-			foreach($this -> data as $key => $val){
-				$$key = $val;
-			}
+			//foreach($this -> data as $key => $val){
+				//$$key = $val;
+			//}
 			
-		}
+		//}
 		
 		ob_start();
 		include $tmpl.'.php';

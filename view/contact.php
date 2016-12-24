@@ -19,7 +19,7 @@
                             <p>Телефон:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc" type="text" name="phone_0" value="<?= $item->phone ?>" />
+                            <input class="inptitledesc" type="text" name="phone_0" value="<?= $item['phone'] ?>" />
                         </td>
                     </tr>
                     
@@ -28,7 +28,7 @@
                             <p>Skype:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc" type="text" name="skype_0" value="<?= $item->skype ?>" />
+                            <input class="inptitledesc" type="text" name="skype_0" value="<?= $item['skype'] ?>" />
                         </td>
                     </tr>
                     
@@ -37,7 +37,7 @@
                             <p>Email:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc" type="text" name="email_0" value="<?= $item->email ?>" />
+                            <input class="inptitledesc" type="text" name="email_0" value="<?= $item['email'] ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -51,5 +51,5 @@
                 
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="savecontact" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="save-contacts" value="Сохранить изменения">
 </form>

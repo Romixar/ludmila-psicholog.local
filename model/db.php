@@ -88,10 +88,10 @@ class DB{
 		
 		$sql = 'UPDATE `'.static::$table.'` SET '.implode(', ',$data).' WHERE `id` = :id';
 		
-		echo $sql.'<br/>';
-		print_r($params);
+		//echo $sql.'<br/>';
+		//print_r($params);
 
-		//return $this -> query($sql, $params);
+		return $this -> query($sql, $params);
 		
 	}
 	
@@ -112,9 +112,9 @@ class DB{
 		
 		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES ('.implode(', ',$vals).')';
 
-		echo $sql.'<br/>';
-		print_r($params);
-		//return $this -> query($sql, $params, true);
+		//echo $sql.'<br/>';
+		//print_r($params);
+		return $this -> query($sql, $params, true);
 		
 	}
 	
