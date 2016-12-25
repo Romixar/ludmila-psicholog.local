@@ -28,7 +28,7 @@
                             <input class="inpprice" type="text" name="duration_<?= $i ?>" value="<?= $this->data[$i]['duration'] ?>" />
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $this->data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>
                         </td>
                     </tr>
                 <?php
@@ -36,7 +36,7 @@
                     }
                 ?>
                 <?php
-                    if(isset($_POST['add-prices'])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if(isset($_POST["add-".$this->data['func']])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($this->data);// номер для имени поля
                     ?>
                         <tr>
@@ -59,6 +59,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="add-prices" value="Добавить новую услугу">
-       <input class="buttsave" type="submit" name="save-prices" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новую услугу">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
 </form>

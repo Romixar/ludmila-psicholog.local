@@ -75,6 +75,27 @@ class DB{
 		
 	}
 	
+	public function checkID($id){
+		
+		$sql = 'SELECT * FROM `'.static::$table.'` WHERE `id` = :id';
+		
+		$params = [':id' => $id];
+		
+		if(!$this -> query($sql, $params)) return false;
+		else{
+			$this -> delete($params);
+			return true;
+		}
+	}
+	
+	public function delete($params){
+		
+		$sql = 'DELETE FROM `'.static::$table.'` WHERE `id` = :id';
+		
+		$this -> query($sql, $params);
+		
+	}
+	
 	public function selectAll(){
 		
 		$sql = 'SELECT * FROM `'.static::$table.'`';
@@ -118,6 +139,8 @@ class DB{
 		
 	}
 	
+
+	
 	
     
 	
@@ -139,23 +162,6 @@ class DB{
 	
 	
 }
-
-//$db = new DB();
-
-//$res = $db -> select('SELECT * FROM `price_table` WHERE `id` = :id', [':id' => 3]);
-
-//$res = $db -> update(['`title` = "проверка_000"','`price` = 123'], [':id' => 59]);
-
-//$res = $db -> insert('price_table', ['`title`' => 'КРУТТООООО!','`price`' => 3210.63]);
-
-// print_r($res);die;
-
-// foreach($res as $row){
-	// print_r($row);
-// }
-
-
-
 
 
 

@@ -37,7 +37,7 @@
                             <textarea class="inpdesc" name="body_<?= $i ?>" cols="50" rows="8"><?= $this->data[$i]['body'] ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $this->data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@
                     }
                 ?>
                 <?php
-                    if(isset($_POST['add-testmonials'])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if(isset($_POST["add-testmonials"])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($this->data);// номер для имени поля
                     ?>
                         <tr>
@@ -79,6 +79,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="add-testmonials" value="Добавить новый отзыв">
-       <input class="buttsave" type="submit" name="save-testmonials" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новый отзыв">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
 </form>

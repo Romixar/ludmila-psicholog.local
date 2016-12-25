@@ -24,7 +24,7 @@
                             <textarea class="inpdesc" name="description_<?= $i ?>" cols="50" rows="8"><?= $this -> data[$i]['description'] ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&iddesc=<?= $this -> data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $this->func ?>_<?= $this -> data[$i]['id'] ?>">Удалить</a>
                         </td>
                     </tr>
                    
@@ -34,7 +34,7 @@
                 ?>
                 <?php
                 
-                    if(isset($_POST['add-services'])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if(isset($_POST["add-".$this->data['func']])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($this -> data);// номер для имени поля
                     ?>
                      
@@ -57,6 +57,6 @@
                 </tbody>
             </table>
             
-       <input class="buttsave" type="submit" name="add-services" value="Добавить новую услугу">
-       <input class="buttsave" type="submit" name="save-services" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новую услугу">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
 </form>

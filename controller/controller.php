@@ -16,18 +16,21 @@ class Controller{
 	public function __construct(){
 		
 		if(!empty($_POST)){
-			
-			
 			$this -> xss($_POST);// отправляю на проверку
 			//$this -> data = $this -> getObj($data);// создание двумерного массива
 			//$this -> cl = static::$class;// получаю класс, который вызывает конструктор при выводе
 			
 		}
+		if(!empty($_GET)){
+			if(!empty($_GET['id'])){
+				$this -> xss($_GET, true);// флаг, то что это GET массив
+			}
+		}
 		
 	}
 	
 	
-	public function xss($data){
+	public function xss($data, $flag){
 		
 		if(is_array($data)){
 			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
@@ -41,8 +44,8 @@ class Controller{
 				$data[$key] = strip_tags($val); //удаление всех HTML тегов
 			
 			}
-			
-			$this -> getData($data);// отправляю провереный массив на создание двумерного
+			if($flag) $this -> checkOnDelete($data);// пришел GET, отправляю проверить надо ли удалять
+			else $this -> getData($data);// отправляю провереный массив на создание двумерного
 		}
 		return false;
 		
@@ -115,6 +118,33 @@ class Controller{
 		}
 	}
 	
+	public function checkOnDelete($get){
+		
+		if(strpos($get['id'],'_')){
+			$arr = explode('_',$get['id']);
+			if(count($arr) == 2){
+				
+				$id = (int)$arr[1];// получаю цифру, кот-я может быть ID, если можно получить
+				
+				if($id == 0 || !is_int($id)) return false;
+				
+				if(preg_match('/^[a-z]{4,11}$/',$arr[0])){
+					
+					if (class_exists($arr[0])){// если класс существует
+						
+						$myclass = new $arr[0]();
+						
+						// проверить есть ли такой id и удалить
+						if($myclass -> checkID($id)) return true;
+						else return false;
+						
+					}else return false;	
+				}
+			}
+			return false;
+		}
+	}
+	
 	
 	
 	public function actionAll(){
@@ -125,7 +155,8 @@ class Controller{
 			
 			$arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
 			$tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
-
+			$view -> func = '';// здесь будет идентификатор класса, который создает страницу
+			$cl_name = get_class($this -> arr[$i]);// получаю имя класс созданного ообъекта
 			$view -> data = [];// перед началом второй итерации обнуляю
 			
 			for($j=0; $j<count($arrObj); $j++){
@@ -133,8 +164,9 @@ class Controller{
 				$view -> data[$j] = $arrObj[$j] -> data;
 				
 			}
-			
-			//var_dump($view -> data);//die;
+			// добавлю потом в кадую строку название класса, её создавшего
+			$view -> func = strtolower($cl_name);//также это будет идентификатор для submit
+
 			$view -> display($tmpl);// отправляю во view
 
 		}

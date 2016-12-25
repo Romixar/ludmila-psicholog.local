@@ -44,7 +44,7 @@
                            
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&idvid=<?= $this -> data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $this->func ?>_<?= $this -> data[$i]['id'] ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -96,6 +96,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="add-videos" value="Добавить новое видео">
-       <input class="buttsave" type="submit" name="save-videos" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое видео">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
 </form>

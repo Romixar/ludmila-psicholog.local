@@ -2,6 +2,7 @@
 
 class View{
     
+	public $func = '';// здесь будет идентификатор класса, который создает страницу
     public $data = [];
 	
 	private function render($tmpl){// подготовить но не выводить view
@@ -19,7 +20,9 @@ class View{
 		include $tmpl.'.php';
 		$content = ob_get_contents();
 		ob_end_clean();
+		
 		return $content;
+		
 	}
 	
 	public function display($tmpl){// вывести на экран view

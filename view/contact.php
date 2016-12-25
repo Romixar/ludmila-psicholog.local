@@ -16,6 +16,14 @@
                 ?>
                     <tr> 
                         <td>    
+                            <p>Адрес:</p>
+                        </td>
+                        <td>
+                            <input class="inptitledesc" type="text" name="addr_0" value="<?= $item['addr'] ?>" />
+                        </td>
+                    </tr>
+					<tr> 
+                        <td>    
                             <p>Телефон:</p>
                         </td>
                         <td>
@@ -46,10 +54,10 @@
                     
                 <?php
                         
-                    }
+                   }
                 ?>
                 
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="save-contacts" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
 </form>
