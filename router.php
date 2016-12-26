@@ -38,9 +38,11 @@ class Router{
 		
 		$this -> checkURL($ctrl_name, $method);
 		
+		
 		$cont = new $ctrl_name();// запуск выбранного контроллера и его метода
 		$cont -> $method();
-			
+				
+		
 		//echo 'контроллер - '.$ctrl_name.'<br/>';
 		//echo 'метод - '.$method.'<br/>';
 		

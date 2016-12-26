@@ -1,6 +1,6 @@
 <form id="formPrice" action="" method="post">
-       <input class="buttsave" type="submit" name="add-videos" value="Добавить новое видео">
-       <input class="buttsave" type="submit" name="save-videos" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое видео">
+       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
             <table>
                <caption>Лента видеороликов</caption>
                 <thead>
@@ -20,6 +20,7 @@
                 ?>
                    <tr>
                         <td>
+							<input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
                             <input type="checkbox" <?php if($this->data[$i]['view']==1){ ?>checked<?php } ?> name="view_<?= $i ?>" value="<?= $this->data[$i]['view'] ?>">
                         
                         </td>
@@ -55,7 +56,7 @@
                     }
                 ?>
                 <?php
-                    if(isset($_POST['add-videos'])){// проверка нажатия ДОБАВИТЬ
+                    if($this -> open){// проверка нажатия ДОБАВИТЬ
                         $i = count($this->data);// номер для имени поля
                     ?>
                         <tr>

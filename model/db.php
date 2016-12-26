@@ -40,6 +40,9 @@ class DB{
 			$sth = $this -> dbh -> query($sql);// исполнение простого запроса
 			//return $sth -> fetch(PDO::FETCH_OBJ);// возвращаю результат в ввиде объекта std
 			//return $sth -> fetchObject($this -> class);// возвращаю результат в ввиде объекта нужного класса
+			
+			//var_dump($sth -> fetchAll(PDO::FETCH_CLASS, $this -> class));
+			
 			return $sth -> fetchAll(PDO::FETCH_CLASS, $this -> class);// возвращает объект
 			//return $sth -> fetch(PDO::FETCH_LAZY);// возвращает объект
 			//return $sth -> fetchAll();// возвращает массив
@@ -81,11 +84,19 @@ class DB{
 		
 		$params = [':id' => $id];
 		
-		if(!$this -> query($sql, $params)) return false;
-		else{
-			$this -> delete($params);
-			return true;
+		// if(!$this -> query($sql, $params)) return false;
+		// else{
+			// $this -> delete($params);
+			// return true;
+		// }
+		
+		if(!$this -> query($sql, $params)){
+			throw new MyException('Ничего не найдено для удаления в базе!');// вброс исключения
+			return false;
 		}
+		$this -> delete($params);
+		return true;
+		
 	}
 	
 	public function delete($params){
@@ -107,10 +118,14 @@ class DB{
 	
 	public function update($data, $params){
 		
+		
+
+		
+		
 		$sql = 'UPDATE `'.static::$table.'` SET '.implode(', ',$data).' WHERE `id` = :id';
 		
-		//echo $sql.'<br/>';
-		//print_r($params);
+		// echo $sql.'<br/>';
+		// print_r($params);
 
 		return $this -> query($sql, $params);
 		
@@ -127,7 +142,8 @@ class DB{
 			$key = str_replace('`','',$key);
 			$vals[] = ':'.$key;// именнованная переменная для подстановки
 			if(is_numeric($val)) $params[':'.$key] = $val;// если число, то без кавычек
-			else $params[':'.$key] = "'".$val."'";
+			//else $params[':'.$key] = "'".$val."'";
+			else $params[':'.$key] = $val;
 			
 		}
 		

@@ -1,17 +1,3 @@
-<?php
-
-
-// проверка авторизован ли пользователь
-//if(!isset($_SESSION['logged_user'])){
-    //echo 'пользователь незалогинин';
-    //header('Location: '.$config::HOST_ADDRESS.'login.php');
-    
-//}
-//header("Content-Type: text/html; charset=utf-8");
-// название страницы в массиве
-//$title = $_GET;
-
-?>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 

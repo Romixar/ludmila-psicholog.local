@@ -4,6 +4,9 @@ class View{
     
 	public $func = '';// здесь будет идентификатор класса, который создает страницу
     public $data = [];
+	public $open = false;// флаг открытия поля для добавления
+	public $err = '';
+
 	
 	private function render($tmpl){// подготовить но не выводить view
 		
@@ -36,7 +39,7 @@ class View{
 	public function __get($k){
 		return $this -> data[$k];
 	}
-    
+	
 
     
     

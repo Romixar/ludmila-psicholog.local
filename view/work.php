@@ -31,8 +31,8 @@
                     
                 <?php
                     }
-                    //}
-                    if(isset($_POST['add-works'])){
+                    
+                    if($this -> open){
                         $i = count($this->data);// количество элементов
                 ?>
                         <tr> 

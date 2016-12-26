@@ -11,9 +11,10 @@
 	
 
 
-	//new Controller();
 	$route = new Router;
 	$route -> run();
+
+	
 
 
 

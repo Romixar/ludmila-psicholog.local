@@ -17,6 +17,7 @@
                 ?>
                    <tr>
                         <td>
+							<input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
                             <input class="inptitle" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
                         
                         </td>
@@ -36,7 +37,7 @@
                     }
                 ?>
                 <?php
-                    if(isset($_POST["add-".$this->data['func']])){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if($this -> open){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($this->data);// номер для имени поля
                     ?>
                         <tr>

@@ -9,11 +9,17 @@ class Controller{
 	//public $class = '';// имя класса, который к нам обращается
 	public $cl; // будет экземпляр класса нужной подмодели при получении POST
 	
+	public $openfield;// название класса у которого открыть поля для добавления
+	
 	public $arr = [];// массив для экземплчяров объектов подмоделей и их названий шаблона
+	
+	public $mes;// Объект вывода системных сообщений
 	
 	
 	
 	public function __construct(){
+		
+		$this -> mes = new Messages();// Объект вывода системных сообщений
 		
 		if(!empty($_POST)){
 			$this -> xss($_POST);// отправляю на проверку
@@ -30,7 +36,7 @@ class Controller{
 	}
 	
 	
-	public function xss($data, $flag){
+	public function xss($data, $flag=false){
 		
 		if(is_array($data)){
 			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
@@ -68,20 +74,33 @@ class Controller{
 		
 	}
 	
-	private function selectAction($data){
+	private function selectAction($data){// выбор действия по ключу кнопки отправить
 		
-		$keys = array_keys($data);// получить послед элемент
-		$clname = explode('-',array_pop($keys));// получаю ключ кнопки отправить
-		$this -> cl = new $clname[1]();//беру элемент после дефиса - это название класса, кот-й запустить
-	
+		$arr = [];// здесь будет ключ кнопки отправить, разбитый по дефису -
+		$newdata = [];// здесь будет массив данных без кнокпи отправить
+		
+		foreach($data as $key => $val){
+			
+			if(strpos($key,'-')){
+				$arr = explode('-',$key);// получаю ключ кнопки отправить
+				continue;
+			}
+			$newdata[$key] = $val;// получаю чистый массив
+		}
+		
+		$this -> cl = new $arr[1]();//беру элемент после дефиса - это название класса, кот-й запустить
+		
+		if($arr[0] == 'add') $this -> openfield = $arr[1];// для actionAll название поля в кот открыть
+		
+		return $newdata;
+		
 	}
 		
 	
 	public function save($data){// определим добавить в БД или только обновить
 	
-		$this -> selectAction($data);
-		array_pop($data);// избавляюсь от послед эл-та (кнопки отправления формы)
-		
+		$data = $this -> selectAction($data);
+
 		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
 
 		if($count == count($data)){
@@ -89,17 +108,17 @@ class Controller{
 			$this -> update($data);// отправляю на обновление
 
 		}else{
-			$up_data = array_slice($data, 0, count($data)-1);// без одного последнего элемента
+			$up_data = array_slice($data, 0, count($data)-1);//UPDATE без одного последнего элемента
 			$this -> update($up_data);// на обновление
 			
-			$ins_data = $data[count($data) - 1];//а последний элмент отправляю на вставку
+			$ins_data = $data[count($data) - 1];//а последний элмент отправляю на INSERT
 			if($this -> cl -> insert($ins_data)) return true;
 			else return false;
 		}
 	}
 	
 	public function update($data){
-		
+
 		for($i=0; $i<(count($data)); $i++){
 			
 			$arr = []; // массив для строки данных для запроса к БД
@@ -113,36 +132,56 @@ class Controller{
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
 			}
-			
 			$this -> cl -> update($arr, $params);
+
 		}
+		$this -> mes -> getMessage('VID_SAVE');
+		// echo'<pre>';
+		// print_r($params);
+		// echo'</pre>';
+		//die;
+		
 	}
 	
-	public function checkOnDelete($get){
+	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
 		
-		if(strpos($get['id'],'_')){
-			$arr = explode('_',$get['id']);
-			if(count($arr) == 2){
-				
-				$id = (int)$arr[1];// получаю цифру, кот-я может быть ID, если можно получить
-				
-				if($id == 0 || !is_int($id)) return false;
-				
-				if(preg_match('/^[a-z]{4,11}$/',$arr[0])){
+		
+		try{// отлов исключений базы данных		
+			if(strpos($get['id'],'_')){
+				$arr = explode('_',$get['id']);
+				if(count($arr) == 2){
 					
-					if (class_exists($arr[0])){// если класс существует
+					if(!$id = $this -> isIntNum($arr[1])) return false;
+					
+					if($this -> checkClassName($arr[0])){
 						
 						$myclass = new $arr[0]();
 						
-						// проверить есть ли такой id и удалить
-						if($myclass -> checkID($id)) return true;
-						else return false;
-						
-					}else return false;	
+						if($myclass -> checkID($id)) return true;// проверить есть ли такой id и удалить		
+					}
 				}
 			}
-			return false;
+		}catch(Exception $e){
+			$view = new View();
+			$view -> err = $e -> getMessage();
+			$view -> display('error');
+
 		}
+	}
+
+	private function checkClassName($cl_name){// проверяю наличие класса
+		if(preg_match('/^[a-z]{4,11}$/',$cl_name))
+			if(class_exists($cl_name)) return true;
+		return false;
+	}
+	
+	private function isIntNum($num){// проверяю число может ли оно быть ID
+		if((int)$num != 0 || is_int($num)) return (int)$num;
+		return false;
+	}
+	
+	private function getClassName($obj){
+		return strtolower(get_class($obj));// получаю имя класс созданного ообъекта
 	}
 	
 	
@@ -151,12 +190,17 @@ class Controller{
 		
 		$view = new View();
 		
+		$open = $this->openfield;
+		
+		
 		for($i=0; $i<count($this -> arr); $i++){
 			
 			$arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
 			$tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
 			$view -> func = '';// здесь будет идентификатор класса, который создает страницу
-			$cl_name = get_class($this -> arr[$i]);// получаю имя класс созданного ообъекта
+			
+			$cl_name = $this -> getClassName($this -> arr[$i]);// получаю имя класс созданного ообъекта
+			
 			$view -> data = [];// перед началом второй итерации обнуляю
 			
 			for($j=0; $j<count($arrObj); $j++){
@@ -164,12 +208,20 @@ class Controller{
 				$view -> data[$j] = $arrObj[$j] -> data;
 				
 			}
+
+			if($open == $cl_name) $view -> open = true;// открываю поле в конкретной форме
+			else $view -> open = false;
 			// добавлю потом в кадую строку название класса, её создавшего
-			$view -> func = strtolower($cl_name);//также это будет идентификатор для submit
+			$view -> func = $cl_name;//также это будет идентификатор для submit
 
 			$view -> display($tmpl);// отправляю во view
 
 		}
+		
+		
+		
+		
+		
 		
 	}
 	
