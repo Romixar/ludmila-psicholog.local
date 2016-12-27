@@ -14,6 +14,8 @@ class Controller{
 	public $arr = [];// массив для экземплчяров объектов подмоделей и их названий шаблона
 	
 	public $mes;// Объект вывода системных сообщений
+    
+    public $err = [];// здесь буду собирать ошибки в полях ввода
 	
 	
 	
@@ -51,7 +53,7 @@ class Controller{
 			
 			}
 			if($flag) $this -> checkOnDelete($data);// пришел GET, отправляю проверить надо ли удалять
-			else $this -> getData($data);// отправляю провереный массив на создание двумерного
+			else $this -> checkData($data);// отправляю провереный массив на проверку типа данных
 		}
 		return false;
 		
@@ -70,10 +72,71 @@ class Controller{
 				$newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
 
+
 		$this -> save($newdata);// определит на UPDATE или INSERT идут данные
 		
 	}
+    
+    private function checkData($data){
+
+        $err = []; // здесь буду собирать все ошибки
+        $i = 0;
+        foreach($data as $key => $val){
+            
+            if(strpos($key,'title_') !== false) $this -> checkLen($val,200);
+            //echo $key.' => '.$val;
+            if(strpos($key,'price_') !== false){
+                
+                $val = $this -> checkPrice($val,6,2);// проверка и форматир цены
+                echo $val.'<br/>';
+                ///if(empty($err[$i])) $val = $this -> formatPrice($val);
+                //else echo $val.'<br/>';
+                
+            }
+            
+            //if(strpos($key,'price_') !== false) echo $val;
+            
+            $i++;
+            
+        }
+        
+        
+        
+        
+        if(!empty($this->err)){
+            
+//            foreach($err as $k => $val){
+//                $this -> mes -> getMessage($val);
+//            }
+            echo '<pre>';
+            print_r($this -> err);
+            echo '</pre>';
+            
+        }
+            
+        die;
+        
+    }
+    
+    private function checkLen($val,$size){
+        
+        if(strlen($val) > $size) $this -> err[] = 'ERR_LEN';// превышена длина заполнения поля
+        
+    }
+    
+    private function checkPrice($val,$int,$mnt){
+        
+        if(!preg_match("/^\d{0,".$int."}(\.|\,)?\d{0,".$mnt."}$/",$val)) $this -> err[] = 'ERR_PRICE';
+        else return $this -> formatPrice($val);
+    }
+    
+    private function formatPrice($val){
+        $val = str_replace(',','.',$val);// заменяю запятые
+        if(strpos($val,'.') == 0) $val = '0'.$val;// ексли первой пришла тчк
+        return $val;
+    }
 	
+    // будет создан объект, который прописан в submit
 	private function selectAction($data){// выбор действия по ключу кнопки отправить
 		
 		$arr = [];// здесь будет ключ кнопки отправить, разбитый по дефису -
@@ -91,7 +154,7 @@ class Controller{
 		$this -> cl = new $arr[1]();//беру элемент после дефиса - это название класса, кот-й запустить
 		
 		if($arr[0] == 'add') $this -> openfield = $arr[1];// для actionAll название поля в кот открыть
-		
+
 		return $newdata;
 		
 	}
@@ -99,7 +162,7 @@ class Controller{
 	
 	public function save($data){// определим добавить в БД или только обновить
 	
-		$data = $this -> selectAction($data);
+		$data = $this -> selectAction($data);// получаю чистый массив данных для внесения в БД
 
 		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
 
@@ -112,12 +175,13 @@ class Controller{
 			$this -> update($up_data);// на обновление
 			
 			$ins_data = $data[count($data) - 1];//а последний элмент отправляю на INSERT
-			if($this -> cl -> insert($ins_data)) return true;
+			if($this -> cl -> insert($ins_data)) $this -> mes -> getMessage('VID_ADD');
 			else return false;
 		}
 	}
 	
 	public function update($data){
+
 
 		for($i=0; $i<(count($data)); $i++){
 			
@@ -132,10 +196,10 @@ class Controller{
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
 			}
-			$this -> cl -> update($arr, $params);
-
+			$res = $this -> cl -> update($arr, $params);
 		}
-		$this -> mes -> getMessage('VID_SAVE');
+		if($res) $this -> mes -> getMessage('VID_SAVE');
+        else $this -> mes -> getMessage('ERR_SAVE');
 		// echo'<pre>';
 		// print_r($params);
 		// echo'</pre>';
@@ -144,7 +208,6 @@ class Controller{
 	}
 	
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
-		
 		
 		try{// отлов исключений базы данных		
 			if(strpos($get['id'],'_')){
@@ -181,17 +244,14 @@ class Controller{
 	}
 	
 	private function getClassName($obj){
-		return strtolower(get_class($obj));// получаю имя класс созданного ообъекта
+		return strtolower(get_class($obj));// получаю имя класс созданного объекта
 	}
 	
 	
 	
-	public function actionAll(){
+	public function actionAll(){// вывести весь нужный контент
 		
 		$view = new View();
-		
-		$open = $this->openfield;
-		
 		
 		for($i=0; $i<count($this -> arr); $i++){
 			
@@ -209,7 +269,7 @@ class Controller{
 				
 			}
 
-			if($open == $cl_name) $view -> open = true;// открываю поле в конкретной форме
+			if($this->openfield == $cl_name) $view -> open = true;// открываю поле в конкретной форме
 			else $view -> open = false;
 			// добавлю потом в кадую строку название класса, её создавшего
 			$view -> func = $cl_name;//также это будет идентификатор для submit

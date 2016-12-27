@@ -31,7 +31,7 @@ class DB{
 		
 	}
     
-	protected function query($sql, $params = false, $ins = false){// обработка запроса в PDO
+	protected function query($sql, $params = false){// обработка запроса в PDO
 	
 	//print_r($params);
 	
@@ -47,15 +47,20 @@ class DB{
 			//return $sth -> fetch(PDO::FETCH_LAZY);// возвращает объект
 			//return $sth -> fetchAll();// возвращает массив
 		} 
-		else {// выборка из базы по ключу 
+		else{// запросы в БД с параметрами 
 			
 			$sth = $this -> dbh -> prepare($sql);
 			
 			$sth -> execute($params);// отправляю на исполнение
 			
-			if($ins) return $this -> dbh -> lastInsertId();
+			//if($ins) return $this -> dbh -> lastInsertId();
 			
-			return $sth -> fetchObject($this -> class);// возвращаю масив результат
+            // если есть результат, значит был INSERT
+            if($sth -> fetchObject($this -> class) != false) return $this -> dbh -> lastInsertId();
+            return true;// значит просто UPDATE
+            
+            
+			//return $sth -> fetchObject($this -> class);// возвращаю массив результат
 			//return $sth -> fetch();// возвращаю масив результат
 			
 		}
@@ -118,14 +123,10 @@ class DB{
 	
 	public function update($data, $params){
 		
-		
-
-		
-		
 		$sql = 'UPDATE `'.static::$table.'` SET '.implode(', ',$data).' WHERE `id` = :id';
 		
-		// echo $sql.'<br/>';
-		// print_r($params);
+//		echo $sql.'<br/>';
+//		print_r($params);
 
 		return $this -> query($sql, $params);
 		
@@ -149,9 +150,9 @@ class DB{
 		
 		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES ('.implode(', ',$vals).')';
 
-		//echo $sql.'<br/>';
-		//print_r($params);
-		return $this -> query($sql, $params, true);
+//		echo $sql.'<br/>';
+//		print_r($params);
+		return $this -> query($sql, $params);
 		
 	}
 	

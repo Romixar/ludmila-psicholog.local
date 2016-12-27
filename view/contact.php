@@ -19,6 +19,7 @@
                             <p>Адрес:</p>
                         </td>
                         <td>
+                           <input type="hidden" name="id_0" value="<?= $item['id'] ?>" />
                             <input class="inptitledesc" type="text" name="addr_0" value="<?= $item['addr'] ?>" />
                         </td>
                     </tr>

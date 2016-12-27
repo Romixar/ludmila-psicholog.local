@@ -8,10 +8,8 @@ class Messages{// для вывода системных сообщений
 		
 		$view = new View();
 		
-		foreach($row as $k => $v){
-			if($k == $code) $view -> err = $v;		
-		}
-		
+        $view -> err = $row[$code];
+        // если сообщение не ошибка то шаблон success
 		if(strpos($code,'ERR') === false) $view -> display('success');
 		else $view -> display('error');
 		
