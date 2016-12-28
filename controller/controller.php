@@ -48,8 +48,8 @@ class Controller{
 				$val = trim($val);//очистка от пробелов
 				
 				$val = preg_replace($req,'',$val);
-				
-				$data[$key] = strip_tags($val); //удаление всех HTML тегов
+                
+                $data[$key] = htmlspecialchars($val);//все HTML теги в сущности
 			
 			}
 			if($flag) $this -> checkOnDelete($data);// пришел GET, отправляю проверить надо ли удалять
@@ -77,28 +77,50 @@ class Controller{
 		
 	}
     
+    
+    
     private function checkData($data){
 
         $err = []; // здесь буду собирать все ошибки
-        $i = 0;
+        
         foreach($data as $key => $val){
             
-            if(strpos($key,'title_') !== false) $this -> checkLen($val,200);
-            //echo $key.' => '.$val;
-            if(strpos($key,'price_') !== false){
-                
-                $val = $this -> checkPrice($val,6,2);// проверка и форматир цены
-                echo $val.'<br/>';
-                ///if(empty($err[$i])) $val = $this -> formatPrice($val);
-                //else echo $val.'<br/>';
-                
+            // удаляю теги у всех полей кроме этих
+            if(strpos($key,'description_') === false){
+                $val = htmlspecialchars_decode($val);
+                $data[$key] = strip_tags($val);
             }
             
-            //if(strpos($key,'price_') !== false) echo $val;
+            // проверка на длину поле длительность занятий
+            if(strpos($key,'duration_') !== false) $this -> checkLen($val,50);
             
-            $i++;
+            // проверка на длину поле превью отзыва
+            if(strpos($key,'head_') !== false) $this -> checkLen($val,400);
+            
+            //проверка на длину поле заголовков и имен
+            if(strpos($key,'title_') !== false || (strpos($key,'name_') !== false))
+                $this -> checkLen($val,255);
+            
+            // проверка и форматир цены для внесения в БД
+            if(strpos($key,'price_') !== false) $data[$key] = $this -> checkPrice($val,6,2);
+            
+            if(strpos($key,'phone_') !== false) $data[$key] = $this -> checkPhone($val);
+            
+            // возвращаю дату в виде TS
+            if(strpos($key,'dateadd_') !== false) $data[$key] = $this -> isDate($val);
+            
+            // проверка ЮТУБ адреса и возвращаю только код видео
+            if(strpos($key,'url_') !== false) $data[$key] = $this -> checkYouTubeURL($val);
+            
+            
+            
+            
+            
             
         }
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
         
         
         
@@ -126,14 +148,120 @@ class Controller{
     
     private function checkPrice($val,$int,$mnt){
         
-        if(!preg_match("/^\d{0,".$int."}(\.|\,)?\d{0,".$mnt."}$/",$val)) $this -> err[] = 'ERR_PRICE';
-        else return $this -> formatPrice($val);
+        if(!preg_match("/^\d{0,".$int."}(\.|\,)?\d{0,".$int."}$/",$val)){
+            $this -> err[] = 'ERR_PRICE';
+            return $val;
+        }
+        return $this -> formatPrice($val,$mnt,'');// если все ок, вернуть форматир цену
     }
     
-    private function formatPrice($val){
-        $val = str_replace(',','.',$val);// заменяю запятые
+    private function checkPhone($val){
+        
+        $reg = ['/\+/','/\s/','/-/','/_/','/\(/','/\)/','/\./','/\,/'];// убрать из тел номера
+        $val = preg_replace($reg,'',$val);
+        
+        if(preg_match('/^\d{4,15}$/', $val)) return $val;
+        else{
+            $this -> err[] = 'ERR_PHONE';
+            return $val;
+        }
+        
+        
+    }
+    
+    private function formatPrice($val,$mnt,$sep){
+        
+        $val = str_replace(',','.',$val);// заменяю запятую на точку
         if(strpos($val,'.') == 0) $val = '0'.$val;// ексли первой пришла тчк
+        
+        return number_format($val, $mnt, ".", $sep);// окр до указанного кол-ва знаков после запятой
+        
+    }
+    
+    private function checkYouTubeURL($val){
+        
+        if($val != ''){
+            // http://easyregexp.ru/constructor - конструктор регулярок
+            if(!preg_match('/^(youtu){1}$/i',$val)){
+                
+                $this -> err[] = 'ERR_VID';
+                return $val;
+            }
+            
+            $code = '';// здесь будет код YOUTUBE видеоролика
+            
+            if(strpos($val,'youtube.com/watch?v=') !== false){
+                
+                $pos = strpos($val,'=');// вырезаем строку после знака =
+                $code = substr($val, $pos + 1);
+
+            }
+            if(strpos($val,'youtu.be/') !== false){
+                $pos = strpos($val,'.');
+                $code = substr($val, $pos + 4);// вырезать и вернуть всё после /
+                return $code;
+            }
+            if(strpos($val,'youtube.com/embed') !== false){
+                $pos = strpos($val,'d');
+                $code = substr($val, $pos + 2); // возращаю все доконца строки начиная с /
+                return $code;
+            }
+            if(!$code){
+                
+                $this -> err[] = 'ERR_VID';
+                return $val;
+                
+            }
+            // если есть & в строке, то вырезаем все перед ним
+            if(strpos($code,'&')) $code = substr($code,0,strpos($code,'&'));
+            return $code;
+
+        }
+        
+        $this -> err[] = 'ERR_VID_EMPTY';
+        return '';
+        
+        
+    }
+    
+    private function isDate($val){
+        
+        if($val == '') return time();//создание текущей TS если польз-ль ничего не указал
+        
+        $reg = '/^(\d\d){1,2}[\.\/-]\d{1,2}[\.\/-](\d\d){1,2}$/';// XXXX-XX-XXXX
+        if(preg_match($reg,$val)){
+
+            $arr = preg_split("/\.|\/|-/", $val);// разбив в массив по . / или -
+            $mon = $arr[1];// месяц
+            
+            if($mon <= 31){
+                
+                $len2 = strlen($arr[2]);// длина последнего элемента даты
+                $len0 = strlen($arr[0]);// длина первого элемента даты
+
+                // если 4 цифры в конце и 2 в начале то это год и день
+                // или по две в конце и начале                        
+                $ts = $this -> checkTS($len2, $len0, $mon, $arr[0], $arr[2]);
+                if($ts != false && $ts > 0) return $ts;// TS получен
+                
+                // если 2 цифры в конце и 4 в начале то это день и год
+                // или по две в конце и начале
+                $ts = $this -> checkTS($len0, $len2, $mon, $arr[2], $arr[0]);
+                if($ts != false && $ts > 0) return $ts;// TS получен
+                      
+                $this -> err[] = 'ERR_FORMAT_DATE';
+                return $val;
+            }
+        }
+        $this -> err[] = 'ERR_DATE';    
         return $val;
+        //mktime(0,0,0,3,12,2016);// создание тайм стэмп
+        //echo strftime ('%d-%m-%Y',mktime(0,0,0,$mon,$day,$year) );//создание отформатир даты из ТС
+    }
+    
+    private function checkTS($len2, $len0, $mon, $day, $year){
+        if(($len2 == 4) && ($len0 == 2) || ($len0 == 2) && ($len2 == 2))
+            return mktime(0,0,0,$mon,$day,$year);//создание ТС из даты польз-ля    
     }
 	
     // будет создан объект, который прописан в submit

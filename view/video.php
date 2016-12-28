@@ -32,7 +32,7 @@
                             </p>
                             
                             <p>Дата добавления: (дд.мм.гггг)</p>
-                            <input type="date" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
+                            <input type="text" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
                         </td>
                         <td>
                            
