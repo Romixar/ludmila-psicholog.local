@@ -1,7 +1,6 @@
 <?php
 
-//require_once '../model/services.php';
-//require_once '../view/view.php';
+// http://easyregexp.ru/constructor - конструктор регулярок
 
 class Controller{
 	
@@ -11,7 +10,7 @@ class Controller{
 	
 	public $openfield;// название класса у которого открыть поля для добавления
 	
-	public $arr = [];// массив для экземплчяров объектов подмоделей и их названий шаблона
+	public $arr = [];// массив для экземпяров объектов подмоделей и их названий шаблона
 	
 	public $mes;// Объект вывода системных сообщений
     
@@ -58,111 +57,209 @@ class Controller{
 		return false;
 		
 	}
-	
-	public function getData($data){// получение двумерного массива
-		
-		$newdata = [];
+    
+    // создание двумерног8о массива из ассоциативного
+    public function getDoubleData($data){
+        $newdata = [];// здесь будет новый двумерный массив
 		
 		foreach($data as $key => $val){
 				
 			if($pos = strpos($key,'_')){
-				$num = substr($key,$pos+1);// взять номер поля
+				$num = substr($key,$pos + 1);// взять номер поля
 				$newdata[$num][substr($key,0,$pos)] = $val;// делать эл-т под этим номером
-			}else
-				$newdata[$key] = $val;// кнопка с какой формы пришел массив
+			}else $newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
+        return $newdata;
+    }
+	
+	public function getData($data){// распрделение массива на создание двумерного, чекбоксов, и save
 
-
+        $newdata = $this -> getDoubleData($data);        
+        // проверку чекбоксов провести
+        $newdata = $this -> checkBox($newdata);
+        
+        
+        
+        
+        
+        
+        
 		$this -> save($newdata);// определит на UPDATE или INSERT идут данные
 		
 	}
     
     
     
-    private function checkData($data){
-
+    private function checkData($data){// отправляю на проверку каждое поле
         $err = []; // здесь буду собирать все ошибки
         
         foreach($data as $key => $val){
             
-            // удаляю теги у всех полей кроме этих
-            if(strpos($key,'description_') === false){
+            // удаляю теги у всех полей кроме этих (описание услуг, тело отзыва)
+            if(strpos($key,'description_') !== false || strpos($key,'body_') !== false){
+                $val = htmlspecialchars_decode($val);
+                $data[$key] = $this -> checkLen($key,$val,3000);// заодно проверка на длину
+                //echo 'Присутствует - '.$data[$key].'<br/>';
+            }else{
                 $val = htmlspecialchars_decode($val);
                 $data[$key] = strip_tags($val);
+                //echo 'Удалено - '.$data[$key].'<br/>';
             }
             
             // проверка на длину поле длительность занятий
-            if(strpos($key,'duration_') !== false) $this -> checkLen($val,50);
+            if(strpos($key,'duration_') !== false) $data[$key] = $this -> checkLen($key,$val,50);
             
-            // проверка на длину поле превью отзыва
-            if(strpos($key,'head_') !== false) $this -> checkLen($val,400);
+            // проверка на длину поле превью и тело отзыва
+            if(strpos($key,'head_') !== false) $data[$key] = $this -> checkLen($key,$val,400);
             
-            //проверка на длину поле заголовков и имен
-            if(strpos($key,'title_') !== false || (strpos($key,'name_') !== false))
-                $this -> checkLen($val,255);
+            //проверка на длину поле заголовков, имен от внеш и внутрн-х польз-й
+            // авторов видео, адрес, скайп
+            if((strpos($key,'title_') !== false) || (strpos($key,'author_') !== false) || (strpos($key,'addr_') !== false) || (strpos($key,'skype_') !== false) || (strpos($key,'name') !== false))
+                $data[$key] = $this -> checkLen($key,$val,255);
             
             // проверка и форматир цены для внесения в БД
-            if(strpos($key,'price_') !== false) $data[$key] = $this -> checkPrice($val,6,2);
+            if(strpos($key,'price_') !== false) $data[$key] = $this -> checkPrice($key,$val,6,2);
             
-            if(strpos($key,'phone_') !== false) $data[$key] = $this -> checkPhone($val);
+            // проверка от внешних и внутр-х пользователей
+            if(strpos($key,'phone') !== false) $data[$key] = $this -> checkPhone($key,$val);
             
             // возвращаю дату в виде TS
-            if(strpos($key,'dateadd_') !== false) $data[$key] = $this -> isDate($val);
+            if(strpos($key,'dateadd_') !== false) $data[$key] = $this -> isDate($key,$val);
             
             // проверка ЮТУБ адреса и возвращаю только код видео
-            if(strpos($key,'url_') !== false) $data[$key] = $this -> checkYouTubeURL($val);
+            if(strpos($key,'url_') !== false) $data[$key] = $this -> checkYouTubeURL($key,$val);
             
+            // проверка отзыва от внешних пользователей
+            if(strpos($key,'message') !== false){
+                $data[$key] = $this -> checkMessage($key,$val);// если успешный отзыв, то придёт пустой
+                //if(empty($data[$key])) $this -> deleteElem($data, $key);// удаляю его
+            }
             
+            // проверка от внешнего либо от админа
+            if(strpos($key,'email') !== false) $data[$key] = $this -> checkEmail($key,$val);
+            
+        }
+
+        $this -> getData($data);// если все ок, на создание двумерного массива
+        
+    }
+    
+    public function getErrors($data){
+
+        if(!empty($this -> err)){// вывод ошибок, если есть
+//            foreach($this -> err as $k => $val){
+//                $this -> mes -> getMessage($val);
+//            }
+            
+            $newerr = $this -> getDoubleData($this -> err);
+
+            // создание элемента с ошибкой с пометкой в ключе об ошибке
+            for($i=0; $i<count($data); $i++){
+                foreach($data[$i] as $key => $val){
+                    if(isset($newerr[$i][$key])) $data[$i][$key.'-err'] = $val;
+                }
+            }
+            
+            // удаление исходного элемента с ошибкой без пометки об ошибке
+            for($i=0; $i<count($newerr); $i++){
+                foreach($newerr[$i] as $key => $val){
+                    if(isset($data[$i][$key])) unset($data[$i][$key]);
+                }   
+            }
+            
+            ... теперь направить обратно в форму с указанием ошибок...
             
             
             
             
         }
+        
         echo '<pre>';
         print_r($data);
         echo '</pre>';
-        
-        
-        
-        
-        if(!empty($this->err)){
-            
-//            foreach($err as $k => $val){
-//                $this -> mes -> getMessage($val);
-//            }
-            echo '<pre>';
-            print_r($this -> err);
-            echo '</pre>';
-            
-        }
-            
         die;
         
-    }
-    
-    private function checkLen($val,$size){
+        return false; // если ошибок нет
         
-        if(strlen($val) > $size) $this -> err[] = 'ERR_LEN';// превышена длина заполнения поля
         
     }
     
-    private function checkPrice($val,$int,$mnt){
+    
+    private function deleteElem($elem, $key=false){
+        if(!$key) unset($elem);
+        else{
+            unset($elem[$key]);
+            return $elem;// вернуть массив без элемента обратно тому кто просил
+        }
+    }
+    
+    // выбирается нужен чекбокс массиву формы или нет на основании флага в классе подмодели
+    // если нужен, то проставляются соответсвующие значения
+    private function checkBox($data){
+        $temp = []; // здесь будет временно кнопка отправить
+        $k = ''; // будет ключ этого элемента
+        
+        foreach($data as $key => $val){// получаю флаг наличия чекбоксов (нужны ли они вообще)
+            
+            if(strpos($key,'-') !== false){
+                $cl_name = substr($key,strpos($key,'-') + 1);// имя класса, у которого форма
+                $temp[$key] = $data[$key];// запишем элемент кнопки отправить во вр-й массив
+                $k = $key;// запишем имя ключа, чтобы затем удалить его
+            }
+        }
+        
+        $data = $this -> deleteElem($data, $k); // удаляю на время кнопку отправить
+        
+        if($cl_name::$checkBox){// если чеабоксы данная форма использует
+            
+            for($i=0; $i<count($data); $i++){
+                
+                if(isset($data[$i]['view'])) $data[$i]['view'] = 1;
+                else $data[$i]['view'] = 0;
+                
+            }
+            
+        }
+        
+        // объединяю с полями ошибок если есть
+        if(!$this -> getErrors($data)){
+            
+            $data[$k] = $temp[$k];// вернул на место временно удал-й эл-т
+            $this -> deleteElem($temp, $k);// удаляю вр-й массив
+
+            return $data;// возвращаю, если нет ошибок
+            
+        }
+        
+        
+        
+            
+        
+    }
+    
+    private function checkLen($key,$val,$size){
+        
+        if(strlen($val) > $size) $this -> err[$key] = 'ERR_LEN';// превышена длина заполнения поля
+        return $val;
+    }
+    
+    private function checkPrice($key,$val,$int,$mnt){
         
         if(!preg_match("/^\d{0,".$int."}(\.|\,)?\d{0,".$int."}$/",$val)){
-            $this -> err[] = 'ERR_PRICE';
+            $this -> err[$key] = 'ERR_PRICE';
             return $val;
         }
         return $this -> formatPrice($val,$mnt,'');// если все ок, вернуть форматир цену
     }
     
-    private function checkPhone($val){
+    private function checkPhone($key,$val){
         
         $reg = ['/\+/','/\s/','/-/','/_/','/\(/','/\)/','/\./','/\,/'];// убрать из тел номера
         $val = preg_replace($reg,'',$val);
         
         if(preg_match('/^\d{4,15}$/', $val)) return $val;
         else{
-            $this -> err[] = 'ERR_PHONE';
+            $this -> err[$key] = 'ERR_PHONE';
             return $val;
         }
         
@@ -178,53 +275,156 @@ class Controller{
         
     }
     
-    private function checkYouTubeURL($val){
+    
+    private function checkYouTubeURL($key, $val){
         
         if($val != ''){
-            // http://easyregexp.ru/constructor - конструктор регулярок
-            if(!preg_match('/^(youtu){1}$/i',$val)){
+            // если кол-во совпадений не равно 1, то ссылка НЕ правильная
+            if(preg_match_all('/youtu/',$val) == 1){
                 
-                $this -> err[] = 'ERR_VID';
-                return $val;
-            }
+                $code = '';// здесь будет код YOUTUBE видеоролика
             
-            $code = '';// здесь будет код YOUTUBE видеоролика
-            
-            if(strpos($val,'youtube.com/watch?v=') !== false){
-                
-                $pos = strpos($val,'=');// вырезаем строку после знака =
-                $code = substr($val, $pos + 1);
+                if(strpos($val,'youtube.com/watch?v=') !== false){
 
-            }
-            if(strpos($val,'youtu.be/') !== false){
-                $pos = strpos($val,'.');
-                $code = substr($val, $pos + 4);// вырезать и вернуть всё после /
-                return $code;
-            }
-            if(strpos($val,'youtube.com/embed') !== false){
-                $pos = strpos($val,'d');
-                $code = substr($val, $pos + 2); // возращаю все доконца строки начиная с /
-                return $code;
-            }
-            if(!$code){
-                
-                $this -> err[] = 'ERR_VID';
-                return $val;
-                
-            }
-            // если есть & в строке, то вырезаем все перед ним
-            if(strpos($code,'&')) $code = substr($code,0,strpos($code,'&'));
-            return $code;
+                    $pos = strpos($val,'=');// вырезаем строку после знака =
+                    $code = substr($val, $pos + 1);
 
+                }
+                if(strpos($val,'youtu.be/') !== false){
+                    $pos = strpos($val,'.');
+                    $code = substr($val, $pos + 4);// вырезать и вернуть всё после /
+                    return $code;
+                }
+                if(strpos($val,'youtube.com/embed') !== false){
+                    $pos = strpos($val,'d');
+                    $code = substr($val, $pos + 2); // возращаю все доконца строки начиная с /
+                    return $code;
+                }
+                if($code != ''){// если код не пустой, то ещё проверим на GET парам-ры
+                    // если есть & в строке, то вырезаем все перед ним
+                    if(strpos($code,'&')) $code = substr($code,0,strpos($code,'&'));
+                    return $code;
+                }
+            }
+            $this -> err[$key] = 'ERR_VID';
+            return $val;
         }
-        
-        $this -> err[] = 'ERR_VID_EMPTY';
+        $this -> err[$key] = 'ERR_VID_EMPTY';
         return '';
+        
+    }
+    
+    // получено поле $message от внешнего польз-ля либо админа
+    // проверяю на длину и на корректность длины каждого слова 
+    // и отправляю либо на проверку отзыва либо обратно для отправки письма
+    private function checkMessage($key, $mes){
+        
+        $len = strlen($mes);// длина всего отзыва
+        if($len < 3000){
+            
+            $arrwords = explode(' ',$mes);// разделим отзыв на отдельные слова
+            $endCheck = 'false';// флаг досрочного завершения проверки
+            
+            for($i=0; $i<count($arrwords); $i++){// проверка каждого слова на длину
+                
+                if(strlen($arrwords[$i]) > 30){
+                    $this -> err[$key] = 'ERR_MESS';// если найдено, то ошибка
+                    $endCheck = true;
+                    break;
+                }    
+            }
+            if(!$endCheck){
+                // если внешний польз-ль отправляет письмо
+                if(isset($this -> data['newmail'])) return $mes;// для отправки письма
+                else $this -> checkTestmon($mes, $len);// это отправлен отзыв, проверить
+                return;// завершить
+            }
+        }else $this -> err[$key] = 'ERR_LEN_TESTM';// если большой, то ошибка превышения
+        
+        return $mes;// значит сгенерирована ошибка
+    }
+    
+    // получение отзыва от внешнего пользователя
+    // упаковка их в новые элементы body И head в зависимости от кол-ва текста
+    public function checkTestmon($mes, $len){//проверка длину и рассортировка (введение, текст)
+        
+//        $len = strlen($mes);// длина всего отзыва
+//        if($len < 3000){
+//            
+//            $arrwords = explode(' ',$mes);// разделим отзыв на отдельные слова
+//            $endCheck = 'false';// флаг досрочного завершения проверки
+//            
+//            for($i=0; $i<count($arrwords); $i++){// проверка каждого слова на длину
+//                
+//                if(strlen($arrwords[$i]) > 30){
+//                    $this -> err[] = 'ERR_TESTM';// если найдено, то ошибка
+//                    $endCheck = true;
+//                    break;
+//                }    
+//            }
+//            
+//            if(!$endCheck){// проверяю дальше, если цикл не завершился досрочно
+                
+                
+                // создаем нужные элементы массива для вставки в БД и вывод на сайт
+                if($len < 200){
+                    $this -> data['head'] = $mes;// тогда весь отзыв это вступление
+                    $this -> data['body'] = '';
+                }
+
+                if($len > 200 && $len < 400) $otr = 150;
+
+                if($len > 400) $otr = 350;// тогда вступление будет длиной 350
+
+                if($len > 200){
+
+                    $str160 = substr($mes,0,$otr);// 1-й кусок от 0 длиной 160 символов
+
+                    $strEnd = substr($mes,$otr);// 3-й кусок будет телом отзыва
+
+                    $pos = strpos($strEnd, ' ');//номер позиции первого пробела после 160-го символов
+
+                    $prepost = substr($strEnd,0,$pos+1);// кусок строки до первого пробела (2-й кусок)
+
+                    $this -> data['head'] = $str160.''.$prepost;//заголов сложить из первых двух кусков
+
+                    // остальной текст будет телом отзыва (вырезаю с символа окончания вступления)
+                    $this -> data['body'] = substr($strEnd, strlen($prepost)-1);
+                }
+                return; // выходим из метода
+        
+                
+//            }
+//            
+//            
+//        }else $this -> err[] = 'ERR_LEN_TESTM';// если большой, то ошибка
+//        
+//        return $mes;// некорректный отзыв обратно внешнему пользователю
+        
+    }
+    
+    private function checkEmail($key, $val){
+        
+        if(empty($val)){
+            $this -> err[$key] = 'ERR_EMPTY_EMAIL';
+            return;// закончить выполнение метода
+        }
+        if(strpos($val,'@') !== false){
+            $arr = explode('@',$val);
+            if(count($arr) == 2){// значит несколько знаков @   
+                // регулярка для проверки e-mail
+                $reg = '/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/i';
+                if(preg_match($reg,$val)) return $val;
+            }
+        }
+        $this -> err[$key] = 'ERR_EMAIL';
+        return $val;
         
         
     }
     
-    private function isDate($val){
+    
+    private function isDate($key, $val){
         
         if($val == '') return time();//создание текущей TS если польз-ль ничего не указал
         
@@ -249,11 +449,11 @@ class Controller{
                 $ts = $this -> checkTS($len0, $len2, $mon, $arr[2], $arr[0]);
                 if($ts != false && $ts > 0) return $ts;// TS получен
                       
-                $this -> err[] = 'ERR_FORMAT_DATE';
+                $this -> err[$key] = 'ERR_FORMAT_DATE';
                 return $val;
             }
         }
-        $this -> err[] = 'ERR_DATE';    
+        $this -> err[$key] = 'ERR_DATE';    
         return $val;
         //mktime(0,0,0,3,12,2016);// создание тайм стэмп
         //echo strftime ('%d-%m-%Y',mktime(0,0,0,$mon,$day,$year) );//создание отформатир даты из ТС
@@ -290,6 +490,13 @@ class Controller{
 	
 	public function save($data){// определим добавить в БД или только обновить
 	
+                echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+        die;
+        
+        
+        
 		$data = $this -> selectAction($data);// получаю чистый массив данных для внесения в БД
 
 		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
