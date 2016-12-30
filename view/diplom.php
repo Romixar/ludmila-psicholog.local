@@ -25,7 +25,7 @@
                         </td>
                         <td>
                             
-                            <input class="inptitledesc" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" /><br/>
+                            <input class="inptitledesc<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" /><br/>
                             
                         </td>
                         <td>

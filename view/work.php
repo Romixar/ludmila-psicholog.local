@@ -20,7 +20,7 @@
                        
                         <td>
                             <input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
-							<input class="inptitledesc" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
+							<input class="inptitledesc<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
 							
                         </td>
                         <td>

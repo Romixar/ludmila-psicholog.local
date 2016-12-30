@@ -25,16 +25,16 @@
                         
                         </td>
                         <td>
-                            <input class="inptitledesc" type="text" name="name_<?= $i ?>" value="<?= $this->data[$i]['name'] ?>" />
+                            <input class="inptitledesc<?php if($this->data[$i]['name-err']){?> error<?php } ?>" type="text" name="name_<?= $i ?>" value="<?= $this->data[$i]['name'] ?>" />
                             <p>Дата добавления: (дд.мм.гггг)</p>
-                            <input type="date" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
+                            <input class="<?php if($this->data[$i]['dateadd-err']){?> error<?php } ?>" type="date" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
                         
                         </td>
                         <td>
                             
-                            <textarea class="prewtestm" name="head_<?= $i ?>" cols="50" rows="3"><?= $this->data[$i]['head'] ?></textarea>
+                            <textarea class="prewtestm<?php if($this->data[$i]['head-err']){?> error<?php } ?>" name="head_<?= $i ?>" cols="50" rows="3"><?= $this->data[$i]['head'] ?></textarea>
                             <br/>
-                            <textarea class="inpdesc" name="body_<?= $i ?>" cols="50" rows="8"><?= $this->data[$i]['body'] ?></textarea>
+                            <textarea class="inpdesc<?php if($this->data[$i]['body-err']){?> error<?php } ?>" name="body_<?= $i ?>" cols="50" rows="8"><?= $this->data[$i]['body'] ?></textarea>
                         </td>
                         <td>
                             <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>

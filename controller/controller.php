@@ -59,9 +59,9 @@ class Controller{
 	}
     
     // создание двумерног8о массива из ассоциативного
-    public function getDoubleData($data){
+    public function getDoubleArr($data){
         $newdata = [];// здесь будет новый двумерный массив
-		
+        
 		foreach($data as $key => $val){
 				
 			if($pos = strpos($key,'_')){
@@ -69,14 +69,17 @@ class Controller{
 				$newdata[$num][substr($key,0,$pos)] = $val;// делать эл-т под этим номером
 			}else $newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
+        
+        //$this -> checkBox($newdata);
         return $newdata;
     }
 	
-	public function getData($data){// распрделение массива на создание двумерного, чекбоксов, и save
+    // распрделение массива на создание двумерного, проверку чекбоксов, и на save
+	public function getData($data){
 
-        $newdata = $this -> getDoubleData($data);        
+        //$newdata = $this -> getDoubleArr($data);        
         // проверку чекбоксов провести
-        $newdata = $this -> checkBox($newdata);
+        //$newdata = $this -> checkBox($newdata);
         
         
         
@@ -84,7 +87,7 @@ class Controller{
         
         
         
-		$this -> save($newdata);// определит на UPDATE или INSERT идут данные
+		//$this -> save($newdata);// определит на UPDATE или INSERT идут данные
 		
 	}
     
@@ -140,47 +143,35 @@ class Controller{
             
         }
 
-        $this -> getData($data);// если все ок, на создание двумерного массива
+        //$this -> getData($data);
+        
+        $data = $this -> getDoubleArr($data);// на создание двумерного массива
+        $this -> checkBox($data);
         
     }
     
     public function getErrors($data){
-
-        if(!empty($this -> err)){// вывод ошибок, если есть
+        
+        if(!empty($this -> err)){// вывод сообщения ошибок, если есть
 //            foreach($this -> err as $k => $val){
 //                $this -> mes -> getMessage($val);
 //            }
+        
             
-            $newerr = $this -> getDoubleData($this -> err);
+            
+            $newerr = $this -> getDoubleArr($this -> err);
 
-            // создание элемента с ошибкой с пометкой в ключе об ошибке
+            // создание доп. элемента с пометкой в ключе об ошибке
             for($i=0; $i<count($data); $i++){
                 foreach($data[$i] as $key => $val){
-                    if(isset($newerr[$i][$key])) $data[$i][$key.'-err'] = $val;
+                    if(isset($newerr[$i][$key])) $data[$i][$key.'-err'] = 1;
                 }
             }
             
-            // удаление исходного элемента с ошибкой без пометки об ошибке
-            for($i=0; $i<count($newerr); $i++){
-                foreach($newerr[$i] as $key => $val){
-                    if(isset($data[$i][$key])) unset($data[$i][$key]);
-                }   
-            }
-            
-            ... теперь направить обратно в форму с указанием ошибок...
-            
-            
-            
-            
+            //  ... теперь направить обратно в форму с указанием ошибок...
+            return $data;
         }
-        
-        echo '<pre>';
-        print_r($data);
-        echo '</pre>';
-        die;
-        
         return false; // если ошибок нет
-        
         
     }
     
@@ -199,7 +190,7 @@ class Controller{
         $temp = []; // здесь будет временно кнопка отправить
         $k = ''; // будет ключ этого элемента
         
-        foreach($data as $key => $val){// получаю флаг наличия чекбоксов (нужны ли они вообще)
+        foreach($data as $key => $val){// получаю название класса
             
             if(strpos($key,'-') !== false){
                 $cl_name = substr($key,strpos($key,'-') + 1);// имя класса, у которого форма
@@ -207,33 +198,35 @@ class Controller{
                 $k = $key;// запишем имя ключа, чтобы затем удалить его
             }
         }
-        
-        $data = $this -> deleteElem($data, $k); // удаляю на время кнопку отправить
-        
-        if($cl_name::$checkBox){// если чеабоксы данная форма использует
-            
-            for($i=0; $i<count($data); $i++){
-                
-                if(isset($data[$i]['view'])) $data[$i]['view'] = 1;
-                else $data[$i]['view'] = 0;
-                
-            }
-            
-        }
-        
-        // объединяю с полями ошибок если есть
-        if(!$this -> getErrors($data)){
-            
-            $data[$k] = $temp[$k];// вернул на место временно удал-й эл-т
-            $this -> deleteElem($temp, $k);// удаляю вр-й массив
 
-            return $data;// возвращаю, если нет ошибок
-            
+        $data = $this -> deleteElem($data, $k); // удаляю на время кнопку отправить
+
+        $obj = new $cl_name();
+        
+        // получаю флаг наличия чекбоксов (нужны ли они вообще)
+        if($obj -> checkBox){// если чеабоксы данная форма использует
+            for($i=0; $i<count($data); $i++){
+                if(isset($data[$i]['view'])) $data[$i]['view'] = 1;
+                else $data[$i]['view'] = 0;   
+            }
         }
+
+        $errdata = $this -> getErrors($data);// объединяю с массивом полей ошибки, если есть
         
+        if($errdata !== false) $data = $errdata;
         
+        $data[$k] = $temp[$k];// вернул на место временно удал-й эл-т
+        $this -> deleteElem($temp, $k);// удаляю вр-й массив
         
+        if($errdata !== false){// значит ошибки есть
             
+            $this -> displayErrorForm($data);// отправка на вывод массив с ошибками и кнопкой отправитть
+            return;
+        }
+
+        // если нет ошибок
+        $this -> save($data);// определит на UPDATE или INSERT идут данные
+        
         
     }
     
@@ -466,7 +459,8 @@ class Controller{
 	
     // будет создан объект, который прописан в submit
 	private function selectAction($data){// выбор действия по ключу кнопки отправить
-		
+
+        
 		$arr = [];// здесь будет ключ кнопки отправить, разбитый по дефису -
 		$newdata = [];// здесь будет массив данных без кнокпи отправить
 		
@@ -489,15 +483,18 @@ class Controller{
 		
 	
 	public function save($data){// определим добавить в БД или только обновить
-	
-                echo '<pre>';
-        print_r($data);
-        echo '</pre>';
-        die;
         
         
         
 		$data = $this -> selectAction($data);// получаю чистый массив данных для внесения в БД
+        
+        echo '<pre>';
+        var_dump($this);
+        echo '</pre>';
+        
+        die;
+        
+        
 
 		$count = $this -> cl -> countRow();// запрос кол-ва записей в БД
 
@@ -517,7 +514,6 @@ class Controller{
 	
 	public function update($data){
 
-
 		for($i=0; $i<(count($data)); $i++){
 			
 			$arr = []; // массив для строки данных для запроса к БД
@@ -535,11 +531,7 @@ class Controller{
 		}
 		if($res) $this -> mes -> getMessage('VID_SAVE');
         else $this -> mes -> getMessage('ERR_SAVE');
-		// echo'<pre>';
-		// print_r($params);
-		// echo'</pre>';
-		//die;
-		
+
 	}
 	
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
@@ -567,9 +559,9 @@ class Controller{
 		}
 	}
 
-	private function checkClassName($cl_name){// проверяю наличие класса
-		if(preg_match('/^[a-z]{4,11}$/',$cl_name))
-			if(class_exists($cl_name)) return true;
+	private function checkClassName($cl_name_str){// проверяю наличие класса
+		if(preg_match('/^[a-z]{4,11}$/',$cl_name_str))
+			if(class_exists($cl_name_str)) return true;
 		return false;
 	}
 	
@@ -581,43 +573,82 @@ class Controller{
 	private function getClassName($obj){
 		return strtolower(get_class($obj));// получаю имя класс созданного объекта
 	}
+    
+    public function displayErrorForm($data){
+        
+        $view = new View();
+        
+        $keys = array_keys($data);
+        
+        for($i; $i<count($keys); $i++){// узнаю func кнопки отправить
+            if(strpos($keys[$i],'-')) $arr_func = explode('-',$keys[$i]);
+        }
+        
+        unset($data[implode('-',$arr_func)]);// удалим кнопку отправить
+        
+        for($i=0; $i<count($this->arr); $i++){
+
+            if($this->getClassName($this->arr[$i]) == $arr_func[1]){
+                    
+                $tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
+                
+                for($j=0; $j<count($data); $j++){
+                    
+                    $view -> data[$j] = $data[$j];// добавляю массив с ошибками в объект
+                         
+                }
+            }
+        }
+               
+        for($i=0; $i<count($arr_func); $i++){// удаляю тот объект формы, в которой были ошибки
+            if($arr_func[1] == $this->getClassName($this->arr[$i])){
+                $num_el = $i; // получаю номер удаляемого жлемента
+                unset($this->arr[$i]);
+            }
+        }
+        
+        $view -> func = $arr_func[1];//идентификатор для submit
+        $view -> display($tmpl);// вывод неверно заполненной формы
+        sort($this->arr);// отсортировка, чтобы номера ключей стали с 0
+
+    }
 	
 	
 	
 	public function actionAll(){// вывести весь нужный контент
-		
-		$view = new View();
-		
-		for($i=0; $i<count($this -> arr); $i++){
-			
-			$arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
-			$tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
-			$view -> func = '';// здесь будет идентификатор класса, который создает страницу
-			
-			$cl_name = $this -> getClassName($this -> arr[$i]);// получаю имя класс созданного ообъекта
-			
-			$view -> data = [];// перед началом второй итерации обнуляю
-			
-			for($j=0; $j<count($arrObj); $j++){
-				
-				$view -> data[$j] = $arrObj[$j] -> data;
-				
-			}
 
-			if($this->openfield == $cl_name) $view -> open = true;// открываю поле в конкретной форме
-			else $view -> open = false;
-			// добавлю потом в кадую строку название класса, её создавшего
-			$view -> func = $cl_name;//также это будет идентификатор для submit
+        if(count($this->err) != 0) return;// значит были ошибки от юзера, поэтому ничего не выводим
+        
+        $view = new View();
+        // вывожу все из БД, если нет ошибок
+        for($i=0; $i<count($this -> arr); $i++){// иначе выводим из БД, что в ней сохранилось
+			
+            $arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
+            $tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
+            $view -> func = '';// здесь будет идентификатор класса, который создает страницу
 
-			$view -> display($tmpl);// отправляю во view
+            $class_name = $this -> getClassName($this -> arr[$i]);// получаю имя класс созданного ообъекта
 
-		}
-		
-		
-		
-		
-		
-		
+            $view -> data = [];// перед началом второй итерации обнуляю
+        
+            for($j=0; $j<count($arrObj); $j++){
+
+                $view -> data[$j] = $arrObj[$j] -> data;
+
+            }
+
+            if($this->openfield == $class_name) $view -> open = true;// открываю поле в конкретной форме
+            else $view -> open = false;
+            
+            // добавлю потом в кадую строку название класса, её создавшего
+            $view -> func = $class_name;//также это будет идентификатор для submit
+
+            $view -> display($tmpl);// отправляю во view
+                
+                
+
+        }
+        
 	}
 	
 	

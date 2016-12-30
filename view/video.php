@@ -26,18 +26,18 @@
                         </td>
                         <td>
                             
-                            <input class="inptitledesc" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" /><br/>
+                            <input class="inptitledesc<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" /><br/>
                             <p>
-                                <input class="inptitledesc" type="text" name="author_<?= $i ?>" value="<?= $this->data[$i]['author'] ?>" />
+                                <input class="inptitledesc<?php if($this->data[$i]['author-err']){?> error<?php } ?>" type="text" name="author_<?= $i ?>" value="<?= $this->data[$i]['author'] ?>" />
                             </p>
                             
                             <p>Дата добавления: (дд.мм.гггг)</p>
-                            <input type="text" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
+                            <input class="<?php if($this->data[$i]['dateadd-err']){?> error<?php } ?>" type="text" name="dateadd_<?= $i ?>" value="<?= strftime('%Y-%m-%d',$this->data[$i]['dateadd']) ?>" />
                         </td>
                         <td>
                            
                            <p>
-                             <input class="inpurl" type="text" name="url_<?= $i ?>" value="http://www.youtube.com/embed/<?= $this->data[$i]['url'] ?>" />  
+                             <input class="inpurl<?php if($this->data[$i]['url-err']){?> error<?php } ?>" type="text" name="url_<?= $i ?>" value="http://www.youtube.com/embed/<?= $this->data[$i]['url'] ?>" />  
                            </p>
                            
                            <img src="http://img.youtube.com/vi/<?= $this->data[$i]['url'] ?>/1.jpg" alt="<?= $this->data[$i]['title'] ?>" title="<?= $this->data[$i]['title'] ?>" >

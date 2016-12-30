@@ -18,15 +18,15 @@
                    <tr>
                         <td>
 							<input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
-                            <input class="inptitle" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
+                            <input class="inptitle<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
                         
                         </td>
                         <td>
-                            <input class="inpprice" type="text" name="price_<?= $i ?>" value="<?= $this->data[$i]['price'] ?>" />
+                            <input class="inpprice<?php if($this->data[$i]['price-err']){?> error<?php } ?>" type="text" name="price_<?= $i ?>" value="<?= $this->data[$i]['price'] ?>" />
                         <span>&nbsp;руб.</span>
                         </td>
                         <td>
-                            <input class="inpprice" type="text" name="duration_<?= $i ?>" value="<?= $this->data[$i]['duration'] ?>" />
+                            <input class="inpprice<?php if($this->data[$i]['duration-err']){?> error<?php } ?>" type="text" name="duration_<?= $i ?>" value="<?= $this->data[$i]['duration'] ?>" />
                         </td>
                         <td>
                             <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>
