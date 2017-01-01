@@ -5,7 +5,11 @@ class Check{// проверка входящих данных
     
     public $err = [];// массив ошибок
     
+    public $mes;// системные сообщения
     
+    public function __construct(){
+        $this -> mes = new Messages();
+    }
     
 
     
@@ -29,7 +33,7 @@ class Check{// проверка входящих данных
             if(strpos($key,'phone') !== false) $data[$key] = $this -> checkPhone($key,$val);
             
             // возвращаю дату в виде TS
-            if(strpos($key,'dateadd_') !== false) $data[$key] = $this -> isDate($key,$val);
+            if(strpos($key,'dateadd_') !== false) $data[$key] = $this -> checkDate($key,$val);
             
             // проверка ЮТУБ адреса и возвращаю только код видео
             if(strpos($key,'url_') !== false) $data[$key] = $this -> checkYouTubeURL($key,$val);
@@ -49,12 +53,7 @@ class Check{// проверка входящих данных
         
         
         return $data;
-//        $controller = new Controller();
-//        $controller -> getDoubleArr($data);// на создание двумерного массива
 
-//        $data = $this -> getDoubleArr($data);// на создание двумерного массива
-//
-//        $this -> checkBox($data);// на проверку нужно ли установить чекбоксы
         
     }
     
@@ -296,7 +295,7 @@ class Check{// проверка входящих данных
     
     
     
-    private function isDate($key, $val){
+    private function checkDate($key, $val){
         
         if($val == '') return time();//создание текущей TS если польз-ль ничего не указал
         
@@ -337,9 +336,6 @@ class Check{// проверка входящих данных
         
             return mktime(0,0,0,$mon,$day,$year);//создание ТС из даты польз-ля    
     }
-    
-    
-    
     
     
     
