@@ -5,33 +5,31 @@
 class Controller{
 	
 	public $data = [];// POST GET параметры от пользователя
-	//public $class = '';// имя класса, который к нам обращается
-	public $cl; // будет экземпляр класса нужной подмодели при получении POST
+    
+	public $cl; // будет конкретный объект нужной подмодели при получении POST
 	
-	public $openfield;// название класса у которого открыть поля для добавления
-	
-	public $arr = [];// массив для экземпяров объектов подмоделей и их названий шаблона
+	public $arr = [];// массив для экземпяров объектов подмоделей (в них названий шаблона)
 	
 	public $mes;// Объект вывода системных сообщений
     
     public $err = [];// здесь буду собирать ошибки в полях ввода
-	
-	
+    
+    public $openfield;// название класса у которого открыть поля для добавления
+    
+    public $check;// объект проверка
+    
+    
+    
 	
 	public function __construct(){
 		
 		$this -> mes = new Messages();// Объект вывода системных сообщений
+        
+        
+		if(!empty($_POST)) $this -> xss($_POST);// отправляю на проверку
 		
-		if(!empty($_POST)){
-			$this -> xss($_POST);// отправляю на проверку
-			//$this -> data = $this -> getObj($data);// создание двумерного массива
-			//$this -> cl = static::$class;// получаю класс, который вызывает конструктор при выводе
-			
-		}
 		if(!empty($_GET)){
-			if(!empty($_GET['id'])){
-				$this -> xss($_GET, true);// флаг, то что это GET массив
-			}
+			if(!empty($_GET['id'])) $this -> xss($_GET, true);// флаг, то что это GET id массив
 		}
 		
 	}
@@ -52,7 +50,31 @@ class Controller{
 			
 			}
 			if($flag) $this -> checkOnDelete($data);// пришел GET, отправляю проверить надо ли удалять
-			else $this -> checkData($data);// отправляю провереный массив на проверку типа данных
+			//else $this  -> checkData($data);// отправляю провереный массив на проверку типа данных
+			else{
+                $this -> check = new Check();// Объект для проверки входных данных
+		        
+                $data = $this -> check -> checkData($data);// отправляю провереный массив на проверку типа данных
+                
+                
+                
+                $this -> err = $this -> check -> err;// получаю массив ошибок
+                
+                
+                
+                
+                $data = $this -> getDoubleArr($data);
+                
+                
+                
+                
+                
+                
+                $this -> checkBox($newdata);// на проверку нужно ли установить чекбоксы
+                
+                
+            }
+            
 		}
 		return false;
 		
@@ -70,6 +92,7 @@ class Controller{
 			}else $newdata[$key] = $val;// кнопка с какой формы пришел массив
 		}
 
+        //$this -> checkBox($newdata);// на проверку нужно ли установить чекбоксы
         return $newdata;
     }
 	
@@ -78,6 +101,7 @@ class Controller{
     
     
     private function checkData($data){// отправляю на проверку каждое поле
+        
         
         foreach($data as $key => $val){
             
@@ -117,7 +141,9 @@ class Controller{
         
     }
     
+    
     private function checkTags($key, $val){
+        
         
         // удаляю теги у всех полей кроме этих (описание услуг, тело отзыва)
         if(strpos($key,'description_') !== false || strpos($key,'body_') !== false){
@@ -132,6 +158,7 @@ class Controller{
     }
     
     private function checkLenFields($key, $val){
+        
         
         // проверка на длину поле длительность занятий
         if(strpos($key,'duration_') !== false) return $this -> checkLen($key,$val,50);
@@ -148,19 +175,34 @@ class Controller{
     
     private function checkLen($key,$val,$size){
         
+        
         if(strlen($val) > $size) $this -> err[$key] = 'ERR_LEN';// превышена длина заполнения поля
         return $val;
     }
     
-    public function getErrors($data){
-            
+    
+    
+    
+    
+    public function getErrors($data){// добавляю коды ошибок в массив данных
+        
+        
+        
+        
         $errors = array_unique($this -> err);// отфильтровывваю повторные ошибки
+        
+        
+        
             
         foreach($errors as $k => $val){
             $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
         }
         
         $newerr = $this -> getDoubleArr($this -> err);//получаю двум-й массив кодов ошибок
+        
+        
+        
+
 
         // создание доп. элемента с пометкой в ключе об ошибке для вывода в форму
         for($i=0; $i<count($data); $i++){
@@ -168,6 +210,7 @@ class Controller{
                 if(isset($newerr[$i][$key])) $data[$i][$key.'-err'] = 1;
             }
         }
+
         //  ... теперь направить обратно в форму с указанием ошибок...
         return $data;
         
@@ -186,26 +229,18 @@ class Controller{
     // если нужен, то проставляются соответсвующие значения
     private function checkBox($data){
         
-        $temp = []; // здесь будет временно кнопка отправить
-        $k = ''; // будет ключ этого элемента
         
-        foreach($data as $key => $val){// получаю название класса
-            
-            if(strpos($key,'-') !== false){
-                $cl_name = substr($key,strpos($key,'-') + 1);// имя класса, у которого форма
-                
-                $temp[$key] = $data[$key];// запишем элемент кнопки отправить во вр-й массив
-                
-                $k = $key;// запишем имя ключа, чтобы затем удалить его навремя
-            }
-        }
-
+//        echo '<pre>';
+//        print_r($this -> err);
+//        echo '</pre>';
+        
+        // получаю массив без submit и массмв с парам-ми этой кнопки
+        $data = $this -> getKeySubmit($data, $arr_func);
         
         
-        $data = $this -> deleteElem($data, $k); // удаляю на время кнопку отправить
-
+        
         // получаю флаг наличия чекбоксов (нужны ли они вообще)
-        if($cl_name::$checkBox){// если чеабоксы данная форма использует
+        if($arr_func[1]::$checkBox){// если чеабоксы данная форма использует
             for($i=0; $i<count($data); $i++){
                 if(isset($data[$i]['view'])) $data[$i]['view'] = 1;
                 else $data[$i]['view'] = 0;   
@@ -213,26 +248,63 @@ class Controller{
         }
         
         
+        
+        $this -> checkErrors($data, $arr_func);// вывести ошибки или дальше отправить в БД
+        
+    }
+    
+
+    private function checkErrors($data, $arr_func){
+        
+        
+        
         if(!empty($this -> err)){// если ошибки есть
             $data = $this -> getErrors($data);// объединяю с массивом полей ошибки, если есть
-        }
-        
-        $data[$k] = $temp[$k];// вернул на место временно удал-й эл-т (кнопка отправить)
-        $this -> deleteElem($temp, $k);// удаляю вр-й массив
-        
-        if(!empty($this -> err)){// если ошибки есть
+            
+            $data[implode('-',$arr_func)] = 'кнопка отправить';// вернуть наместо кнопку
+            
+            
+            
+            
             $this -> displayErrorForm($data);// отправка на вывод массив с ошибками и кнопкой отправитть
             return;
+            
         }
-        
         // если нет ошибок
+        $data[implode('-',$arr_func)] = 'кнопка отправить';// вернуть наместо кнопку
+        
         $this -> save($data);// определит на UPDATE или INSERT идут данные
+        
         
     }
     
     
+    private function getKeySubmit($data, &$arr_func){// вернуть параметры (name) кнопки в массиве
+
+        
+        $arr_func = [];// здесь будет ключ кнопки отправить, разбитый по дефису 
+		$newdata = [];// здесь будет массив данных без кнокпи отправить
+
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+        die;
+        
+		foreach($data as $key => $val){
+			
+			if(strpos($key,'-')){
+				$arr_func = explode('-',$key);// получаю ключ кнопки отправить
+				continue;
+			}
+			$newdata[$key] = $val;// получаю чистый массив (без кнопки отправить)
+		}
+        return $newdata;// возвращаю массив без кнопки отправить
+          
+    }
+    
     
     private function checkPrice($key,$val,$int,$mnt){
+        
         
         if(!preg_match("/^\d{0,".$int."}(\.|\,)?\d{0,".$int."}$/",$val)){
             $this -> err[$key] = 'ERR_PRICE';
@@ -242,6 +314,7 @@ class Controller{
     }
     
     private function checkPhone($key,$val){
+        
         
         $reg = ['/\+/','/\s/','/-/','/_/','/\(/','/\)/','/\./','/\,/'];// убрать из тел номера
         $val = preg_replace($reg,'',$val);
@@ -257,6 +330,7 @@ class Controller{
     
     private function formatPrice($val,$mnt,$sep){
         
+        
         $val = str_replace(',','.',$val);// заменяю запятую на точку
         if(strpos($val,'.') == 0) $val = '0'.$val;// ексли первой пришла тчк
         
@@ -266,6 +340,7 @@ class Controller{
     
     
     private function checkYouTubeURL($key, $val){
+        
         
         if($val != ''){
             // если кол-во совпадений не равно 1, то ссылка НЕ правильная
@@ -306,6 +381,7 @@ class Controller{
     // и отправляю либо на проверку отзыва либо обратно для отправки письма
     private function checkMessage($key, $mes){
         
+        
         $len = strlen($mes);// длина всего отзыва
         if($len < 3000){
             
@@ -337,6 +413,7 @@ class Controller{
     // получение отзыва от внешнего пользователя
     // упаковка их в новые элементы body И head в зависимости от кол-ва текста
     public function checkTestmon($mes, $len){//проверка длину и рассортировка (введение, текст)
+        
         
 //        $len = strlen($mes);// длина всего отзыва
 //        if($len < 3000){
@@ -395,6 +472,7 @@ class Controller{
     
     private function checkEmail($key, $val){
         
+        
         if(empty($val)){
             $this -> err[$key] = 'ERR_EMPTY_EMAIL';
             return;// закончить выполнение метода
@@ -415,6 +493,7 @@ class Controller{
     
     
     private function isDate($key, $val){
+        
         
         if($val == '') return time();//создание текущей TS если польз-ль ничего не указал
         
@@ -450,29 +529,27 @@ class Controller{
     }
     
     private function checkTS($len2, $len0, $mon, $day, $year){
+        
         if(($len2 == 4) && ($len0 == 2) || ($len0 == 2) && ($len2 == 2))
+        
             return mktime(0,0,0,$mon,$day,$year);//создание ТС из даты польз-ля    
     }
 	
+    
+    
+    
+    
+    
+    
     // будет создан объект, который прописан в submit кнопке 
     // и проверка какой форме открыть поле для добавления, при нажании ДОБАВИТЬ
 	private function selectAction($data){// выбор действия по ключу кнопки отправить
         
-		$arr = [];// здесь будет ключ кнопки отправить, разбитый по дефису -
-		$newdata = [];// здесь будет массив данных без кнокпи отправить
-		
-		foreach($data as $key => $val){
-			
-			if(strpos($key,'-')){
-				$arr = explode('-',$key);// получаю ключ кнопки отправить
-				continue;
-			}
-			$newdata[$key] = $val;// получаю чистый массив
-		}
-		
-		$this -> cl = new $arr[1]();//беру элемент после дефиса - это название класса, кот-й запустить
-		
-		if($arr[0] == 'add') $this -> openfield = $arr[1];// для actionAll название поля в кот открыть
+        $newdata = $this -> getKeySubmit($data, $arr_func);// получаю ключ кнопки и массив без него
+		$this -> cl = new $arr_func[1]();//беру название класса, кот-й запустить
+        
+		// для actionAll название формы, в кот-й открыть поле
+		if($arr_func[0] == 'add') $this -> openfield = $arr_func[1];
 
 		return $newdata;
 		
@@ -480,6 +557,7 @@ class Controller{
 		
 	
 	public function save($data){// определим добавить в БД или только обновить
+        
         
 		$data = $this -> selectAction($data);// получаю без submit массив для внесения в БД
         
@@ -497,6 +575,7 @@ class Controller{
 		}
 	}
 	
+    
 	public function update($data){
 
 		for($i=0; $i<(count($data)); $i++){
@@ -520,6 +599,7 @@ class Controller{
 
 	}
     
+    
     public function insert($data){
         
         $cols = array_keys($data);// названия столбцов будут для подстановок и сами названия
@@ -538,6 +618,8 @@ class Controller{
         
     }
 	
+    
+    
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
 
 		try{// отлов исключений при удалении из базы данных		
@@ -565,34 +647,37 @@ class Controller{
 		}
 	}
 
+    
+    
 	private function checkClassName($cl_name_str){// проверяю наличие класса
 		if(preg_match('/^[a-z]{4,11}$/',$cl_name_str))
 			if(class_exists($cl_name_str)) return true;
 		return false;
 	}
 	
+    private function getClassName($obj){
+		return strtolower(get_class($obj));// получаю строковое имя класс созданного объекта
+	}
+    
+    
 	private function isIntNum($num){// проверяю число может ли оно быть ID
 		if((int)$num != 0 || is_int($num)) return (int)$num;
 		return false;
 	}
 	
-	private function getClassName($obj){
-		return strtolower(get_class($obj));// получаю строковое имя класс созданного объекта
-	}
+    
+	
+    
     
     public function displayErrorForm($data){
         
         $view = new View();
         
-        $keys = array_keys($data);
+        $data = $this -> getKeySubmit($data, $arr_func);
         
-        for($i; $i<count($keys); $i++){// узнаю func кнопки отправить
-            if(strpos($keys[$i],'-')) $arr_func = explode('-',$keys[$i]);
-        }
         
-        unset($data[implode('-',$arr_func)]);// удалим кнопку отправить
         
-        for($i=0; $i<count($this->arr); $i++){
+        for($i=0; $i<count($this->arr); $i++){// перебор двух объектов страницы
 
             if($this->getClassName($this->arr[$i]) == $arr_func[1]){
                     
@@ -616,6 +701,8 @@ class Controller{
         $view -> func = $arr_func[1];//идентификатор для submit
         $view -> display($tmpl);// вывод неверно заполненной формы
         sort($this->arr);// отсортировка, чтобы номера ключей стали с 0
+        
+        
 
     }
 	
@@ -650,8 +737,7 @@ class Controller{
             $view -> func = $class_name;//также это будет идентификатор для submit
 
             $view -> display($tmpl);// отправляю во view
-                
-                
+
 
         }
         
