@@ -27,7 +27,7 @@ class DB{
 		
 		if(!$this -> dbh) die('Отсутствует подключение к базе данных (((');
 		
-		$this -> class = get_called_class();// получаем имя класс, вызвывающего объект DB
+		$this -> class = get_called_class();// получаем имя класс, вызвывающего этот объект DB
 		
 	}
     
@@ -53,11 +53,25 @@ class DB{
 			
 			$sth -> execute($params);// отправляю на исполнение
 			
-			//if($ins) return $this -> dbh -> lastInsertId();
-			
-            // если есть результат, значит был INSERT
-            if($sth -> fetchObject($this -> class) != false) return $this -> dbh -> lastInsertId();
-            return true;// значит просто UPDATE
+            
+            $resObj = $sth -> fetchObject($this -> class);
+
+            $lastID = $this -> dbh -> lastInsertId();
+
+            if($lastID != 0) return $lastID;// если есть результат, значит был INSERT
+            
+            if($resObj === false) return false;// значит был UPDATE или DELETE
+            
+            
+            
+            
+            
+            //if(!empty($lastID)) return $lastID;// значит был INSERT
+            return $resObj;// значит просто SELECT с параметрами
+            
+            
+            //if($resObj !== false) return $this -> dbh -> lastInsertId();
+            //return $resObj;// значит просто UPDATE или DELETE
             
             
 			//return $sth -> fetchObject($this -> class);// возвращаю массив результат
@@ -89,18 +103,20 @@ class DB{
 		
 		$params = [':id' => $id];
 		
-		// if(!$this -> query($sql, $params)) return false;
-		// else{
-			// $this -> delete($params);
-			// return true;
-		// }
+//        echo $sql.'<br/>';
+//        print_r($params);die;
+        $obj = $this -> query($sql, $params);
+        
+		if($obj !== false){
+            // $this -> delete возвращает FALSE при успешном удалении
+            if($this -> delete($params)) return false;
+		    return true;
+//			throw new MyException('Ничего не найдено для удаления в базе!');// вброс исключения
+//			return true;
+        }
+           
 		
-		if(!$this -> query($sql, $params)){
-			throw new MyException('Ничего не найдено для удаления в базе!');// вброс исключения
-			return false;
-		}
-		$this -> delete($params);
-		return true;
+		
 		
 	}
 	
@@ -108,8 +124,8 @@ class DB{
 		
 		$sql = 'DELETE FROM `'.static::$table.'` WHERE `id` = :id';
 		
-		$this -> query($sql, $params);
-		
+		return $this -> query($sql, $params);
+        
 	}
 	
 	public function selectAll(){
@@ -127,28 +143,13 @@ class DB{
 		
 //		echo $sql.'<br/>';
 //		print_r($params);
-
 		return $this -> query($sql, $params);
 		
 	}
-	
-	public function insert($data){
+	// $vals=false,
+	public function insert($cols, $params){
 		
-		$cols = array_keys($data);// названия столбцов
-		$vals = [];// здесь будут места для подготовленного запроса именнованные переменные
-		$params = [];// здесь будут параметры для подстановки
-		
-		foreach($data as $key => $val){
-			
-			$key = str_replace('`','',$key);
-			$vals[] = ':'.$key;// именнованная переменная для подстановки
-			if(is_numeric($val)) $params[':'.$key] = $val;// если число, то без кавычек
-			//else $params[':'.$key] = "'".$val."'";
-			else $params[':'.$key] = $val;
-			
-		}
-		
-		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES ('.implode(', ',$vals).')';
+		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES (:'.implode(', :',$cols).')';
 
 //		echo $sql.'<br/>';
 //		print_r($params);
