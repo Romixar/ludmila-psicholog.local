@@ -2,7 +2,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="css/style.css"/>
-	<?php //if(is_array($title)){ ?>
+	<?php//if(is_array($title)){ ?>
 		<?php// foreach($title as $key => $val){ ?>
 			<title>Управление страницей <?php// $val ?></title>
 		<?php// } ?>
@@ -16,10 +16,19 @@
     <form action="">
     <div style="margin:auto auto; width:55%;">
         <p>
+           
+           <?php foreach(Config::$routes as $k => $v){ ?>
+           
+               <button type="submit" name="ctrl" value="<?= $k ?>" class="but"><?= $v[1] ?></button>
+           
+           <?php } ?>
+           
+<!--
             <button type="submit" name="ctrl" value="1" class="but">Главная</button>
             <button type="submit" name="ctrl" value="2" class="but">Обо мне</button>
             <button type="submit" name="ctrl" value="3" class="but">Услуги</button>
             <button type="submit" name="ctrl" value="4" class="but">Контакты</button>
+-->
         </p>
     </div>
     </form>     

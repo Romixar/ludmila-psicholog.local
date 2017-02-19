@@ -5,6 +5,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule .* index.php [L]
 
+RewriteRule ^/([a-zA-Z]+)? index.php?ctrl=$1 [L]
+
+
+
+
+
 #RewriteEngine On
 # САЙТ БУДЕТ Без www
 #RewriteCond %{HTTP_HOST} ^www.ludmila-psicholog.ru$ [NC]

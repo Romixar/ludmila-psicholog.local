@@ -18,10 +18,10 @@ class Config{
 	
 	public static $routes = [// маршруты с названиями контроллеров для каждой страницы
 		
-		'ctrl=1' => 'main/all',
-		'ctrl=2' => 'about/all',
-		'ctrl=3' => 'services/all',
-		'ctrl=4' => 'contacts/all',
+		'main' => ['main/all','Главная'],
+		'about' => ['about/all','Обо мне'],
+		'services' => ['services/all','Услуги'],
+		'contacts' => ['contacts/all','Контакты'],
 	
 	];
     
