@@ -4,17 +4,25 @@ class Router{
 
 	// возращаю контроллер и его метод
 	private function checkURL(&$ctrl_name, &$method){
+
+//        if(isset($_GET)) print_r($_GET);
+//        if(isset($_POST)) print_r($_POST);
 			
+        
+        
 		$url = $_SERVER['REQUEST_URI'];// строка адреса после домена
         
-        //debug($url);
+        //debug($_SERVER);
         
-		$reg = '/([a-z=\/]{3,10})/';// шаблон который должен быть в строке адреса
-		//$reg = '/^\/\w/';// шаблон который должен быть в строке адреса
-				
+        //echo get_headers($url);
+        
+		$reg = '/^\/\?([a-z=_]{3,15})$/';// шаблон который должен быть в строке адреса
+		
+        //die;
+        
 		if(preg_match($reg,$url)){// парсить URI и вставить ЧПУ красивый адрес
             
-            debug($url);
+            //debug($url);
             $arr = []; // будет массив из имени КОНТРОЛЛЕРА и его МЕТОДА
             $ctrl = substr($url,strpos($url,'=')+1); // беру все после =
             
@@ -25,7 +33,7 @@ class Router{
 				if($ctrl == $key) $arr = explode('/',$val[0]);
 			}
             
-            $ctrl_name = $ctrl.'controller';
+            $ctrl_name = substr($ctrl,1).'controller';
             $method = 'action'.ucfirst($arr[1]);
             
 		}else{
@@ -33,13 +41,11 @@ class Router{
 			$method = 'actionAll';
 		}
 		
+//        echo 'контроллер - '.$ctrl_name.'<br/>';
+//		echo 'метод - '.$method.'<br/>';
         //die;
 
 	}
-    
-    public function setUrl($ctrl){
-        header('Location: /'.$ctrl);
-    }
 	
 	
 	public function run(){
