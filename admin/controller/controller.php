@@ -36,7 +36,7 @@ class Controller{
 	
 	public function xss($data, $flag=false){
 		
-        debug($data);
+        //debug($data);
         
 		if(is_array($data)){
 			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
@@ -73,6 +73,12 @@ class Controller{
 	
     
     public function checkData($data){// отправка на проверку
+        
+        if(isset($data['do_login'])){
+            if(!LoginController::loginValidate($data)) $this->mes->getMessage('ERR_LOGIN');
+            
+        }
+        
         
         $check = new Check();// Объект для проверки входных данных
 		        

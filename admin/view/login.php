@@ -12,7 +12,7 @@
 <hr>
 <div class="divauth">
     
-    <form class="login" action="login.php" method="post">
+    <form class="login" action="" method="post">
     
         <p>
             <p class="white"><strong>Логин:</strong></p>
@@ -23,7 +23,7 @@
             <input class="inpauth" type="password" name="password" value="<?= @$data['password'] ?>" />
         </p>
         
-        <button type="submit" name="do_login">Войти</button>
+        <button type="submit" name="do_login" value="do_login" >Войти</button>
     
     </form>
                 

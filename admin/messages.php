@@ -4,7 +4,7 @@ class Messages{// для вывода системных сообщений
 	
 	public function getMessage($code, $cl_name=false){
 		
-		$row = parse_ini_file('/messages/messages.ini');
+		$row = parse_ini_file('../messages/messages.ini');
 		
 		$view = new View();
 		
