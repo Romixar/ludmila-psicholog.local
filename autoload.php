@@ -13,4 +13,5 @@ function debug($data){// вывод на экран содержимого дл�
     echo '<pre>'.print_r($data,true).'</pre>';
 }
 
+
 ?>

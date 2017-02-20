@@ -1,15 +1,26 @@
 AddDefaultCharset UTF-8
 
 RewriteEngine On
+Options +FollowSymlinks
+RewriteBase /
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule .* index.php [L]
 
-RewriteRule ^/([a-zA-Z]+)? index.php?ctrl=$1 [L]
-
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 
 
+
+#RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+
+
+
+
+
+
+#RewriteRule ^(.*)(/)$ $1 [R=301,L]
+#RewriteRule ^/([a-zA-Z]+)? ?ctrl=$1 [L]
 
 #RewriteEngine On
 # САЙТ БУДЕТ Без www
