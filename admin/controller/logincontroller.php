@@ -4,8 +4,8 @@ class LoginController extends Controller{
     
     public $user;
     
-    public static $minlen = 3; // кол-во символов на логин?пароль
-    public static $maxlen = 15;
+    public $minlen = 3; // кол-во символов на логин?пароль
+    public $maxlen = 15;
     
     public function __construct(){
 
@@ -28,19 +28,26 @@ class LoginController extends Controller{
         die;
     }
     
-    public static function loginValidate($data){
+    public function loginValidate($data){
         
         foreach($data as $k => $v){
             
-            if(!self::checkLen($v, self::$minlen, self::$maxlen)) return false;
-            else echo 'верно'; //return true;
+            if(!$this->checkLen($v, $this->minlen, $this->maxlen)) return false;
+            else continue;
+            //else echo 'верно'; //return true;
             
         }
+        return true;
+//        $this -> user -> login = $data['login'];
+//        $this -> user -> password = $data['password'];
         
+        //debug($this -> user);
+        
+        //$this -> user -> findUser();
         
     }
     
-    private static function checkLen($v,$min,$max){
+    private function checkLen($v,$min,$max){
         
         if(strlen($v) > $min && strlen($v) < $max){return true;}else{return false;}
         

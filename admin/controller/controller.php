@@ -75,7 +75,21 @@ class Controller{
     public function checkData($data){// отправка на проверку
         
         if(isset($data['do_login'])){
-            if(!LoginController::loginValidate($data)) $this->mes->getMessage('ERR_LOGIN');
+            
+            $login = new LoginController();
+            
+            if(!$login->loginValidate($data)){
+                $view = new View();
+                $view -> display('login');
+                $this->mes->getMessage('LENG_ERR_LOGIN');
+            }
+            else{
+                
+                echo 'попал';
+                
+//                $view = new View();
+//                $view -> display('head');
+            }
             
         }
         

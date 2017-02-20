@@ -48,6 +48,8 @@ class Router{
             
         }
         
+        die;
+        
 		$this -> checkURL($ctrl_name, $method);
         
 		//$view = new View();

@@ -9,9 +9,16 @@ class User extends DB{
 	public $tmpl = 'login';// шаблон для вывоа данной таблицы
     
     public $auth = ''; //  будет ID авторизованного пользователя
+//    public $login = '';
+//    public $password = '';
     
     
-    
+//    public function findUser(){
+//        
+//        debug($this);
+//        
+//        
+//    }
     
     
     
