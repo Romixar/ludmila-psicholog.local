@@ -34,10 +34,23 @@ class Router{
 	
 	
 	public function run(){
-		
+        
+        $view = new View();
+        
+        $login = new LoginController();// проверка логинизации
+        
+        if(!$login->checkLogin()) $login -> authorized(); // не авторизован
+		else{
+            
+            echo 'авторизован';
+            
+            //header('Location: /admin/');
+            
+        }
+        
 		$this -> checkURL($ctrl_name, $method);
         
-		$view = new View();
+		//$view = new View();
 	    $view -> display('head');
         
         echo 'контроллер - '.$ctrl_name.'<br/>';

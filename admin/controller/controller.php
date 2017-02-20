@@ -36,6 +36,8 @@ class Controller{
 	
 	public function xss($data, $flag=false){
 		
+        debug($data);
+        
 		if(is_array($data)){
 			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
 			

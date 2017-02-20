@@ -2,17 +2,28 @@
 
 class LoginController extends Controller{
     
-    
+    public $user;
     
     public function __construct(){
-		$user = new User(); // инициализирую подмодель таблицы
+
+		$this->user = new User(); // инициализирую подмодель таблицы
 		
-		parent::__construct($this -> arr = [$user]);// отправляю в родит-й конструктор эти объекты
+		parent::__construct();// подключаю чтобы поймать POST
         
 
         
 	}
     
+    public function checkLogin(){
+        if(!empty($this->user->auth)) return true;
+        else return false;
+    }
+    
+    public function authorized(){
+        $view = new View();
+        $view -> display('login');
+        die;
+    }
     
 }
 
