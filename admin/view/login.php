@@ -11,6 +11,8 @@
 <h1>Админ-панель</h1>
 <hr>
 <div class="divauth">
+   
+<!--   login/run-->
     
     <form class="login" action="" method="post">
     

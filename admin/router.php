@@ -37,18 +37,31 @@ class Router{
         
         $view = new View();
         
-        $login = new LoginController();// проверка логинизации
-        
-        if(!$login->checkLogin()) $login -> authorized(); // не авторизован
-		else{
+        if(!Session::get('loggedIn')){
             
-            echo 'авторизован';
+            $login = new LoginController();
+            $login->run();
+            //$login -> index();
             
-            //header('Location: /admin/');
             
         }
         
         die;
+//        if(!LoginController::checkLogin()) echo 'неавторизован';
+//        else echo 'авторизован';
+        
+        
+//        die;
+//        if(!LoginController::checkLogin()) $login -> authorized(); // не авторизован
+//		else{
+//            
+//            echo 'авторизован';
+            
+            //header('Location: /admin/');
+            
+        //}
+        
+        //die;
         
 		$this -> checkURL($ctrl_name, $method);
         

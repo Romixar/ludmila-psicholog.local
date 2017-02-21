@@ -11,6 +11,7 @@ class Controller{
 	public $arr = [];// массив для экземпяров объектов подмоделей (в них названий шаблона)
 	
 	public $mes;// Объект вывода системных сообщений
+	public $login;// Объект 
     
     public $err = [];// здесь буду собирать ошибки в полях ввода
     
@@ -76,20 +77,29 @@ class Controller{
         
         if(isset($data['do_login'])){
             
-            $login = new LoginController();
+//            $login = new LoginController();
+//
+//            $login->loginValidate($data);
             
-            if(!$login->loginValidate($data)){
-                $view = new View();
-                $view -> display('login');
-                $this->mes->getMessage('LENG_ERR_LOGIN');
-            }
-            else{
-                
-                echo 'попал';
+            //debug($data);
+            return $data;
+            
+//            if(!$this->loginValidate($data)){
+//                $view = new View();
+//                $view -> display('login');
+//                $this->mes->getMessage('LENG_ERR_LOGIN');
+//            }
+//            else{
+//                
+//                return;
+                //$router = new router();
+                //$router -> run();
+                //return true;
+                //echo 'попал';
                 
 //                $view = new View();
 //                $view -> display('head');
-            }
+//            }
             
         }
         
