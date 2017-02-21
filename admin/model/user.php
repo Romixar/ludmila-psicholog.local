@@ -29,40 +29,29 @@ class User extends DB{
     
     public function run(){
         $view = new View();
-        
-        
-        if(isset($_POST['do_login'])){
+
             
-            $sth = $this->dbh->prepare("SELECT `id` FROM `users` WHERE `login` = :login AND `password` = MD5(:password)");
+        $sth = $this->dbh->prepare("SELECT `id` FROM `users` WHERE `login` = :login AND `password` = MD5(:password)");
 
         
-            $sth->execute(array(
-               ':login' => $_POST['login'],
-               ':password' => $_POST['password']
-            ));
+        $sth->execute(array(
+           ':login' => $_POST['login'],
+           ':password' => $_POST['password']
+        ));
 
-            $data = $sth->fetchAll();        
+        $data = $sth->fetchAll();        
 
-            if(count($data) == 1){
+        if(count($data) == 1){
 
-               Session::init();// создание сессии
-               Session::set('loggedIn', true);// установка значения в сессию
+            Session::init();// создание сессии
+            Session::set('loggedIn', true);// установка значения в сессию
 
-                $view->display('head');
-               //header('Location: ../admin');
-            }else{
-                $view->display('login');
-               //header('Location: ../login.php');
-            }
-            
-            
-            
-            
-            
+            $view->display('head');
+            //exit('сессия');
+           //header('Location: ../admin');
         }
-        
-        
-        
+            
+            
         
     }
     

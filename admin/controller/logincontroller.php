@@ -16,6 +16,8 @@ class LoginController extends Controller{
         Session::init();
         $logged = Session::get('loggedIn');
         
+        //debug($logged);
+        
         if($logged == false){
             Session::destroy();
             
@@ -38,24 +40,30 @@ class LoginController extends Controller{
     
     
     public function index(){
-        $this -> view -> display('login');
-        //die;
+        //$this -> view -> display('login');
+        //echo 'попал';
+        header('Location: /admin');
+        die;
     }
     
-    public function actionLogout() {
+    public function actionLogout(){
       
+        echo 'попал в actionLogout';
         Session::destroy();
         
+        //$this -> index();
+        
         $this -> view -> display('login');
-        
-        
-//        header('refresh:1;url=/');
+
         exit();
     }
     
     public function run(){
         
-        $this -> user -> run();
+        if(!empty($_POST['do_login'])) $this -> user -> run();
+        //else die;
+        else $this -> index();
+        
         
     }
     

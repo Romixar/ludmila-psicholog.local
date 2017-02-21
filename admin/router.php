@@ -39,29 +39,32 @@ class Router{
         
         if(!Session::get('loggedIn')){
             
+            //echo 'стр авторизации';
+            
             $login = new LoginController();
             $login->run();
             //$login -> index();
             
             
+        }else{
+            
+            debug(Session::get('loggedIn'));
+            
+            $this -> checkURL($ctrl_name, $method);
+        
+            //$view = new View();
+            $view -> display('head');
+
+            echo 'контроллер - '.$ctrl_name.'<br/>';
+            echo 'метод - '.$method.'<br/>';
+
+            $cont = new $ctrl_name();// запуск выбранного контроллера и его метода
+            $cont -> $method();
+            
+            
         }
         
-        //die;
-        
-        
-        
-        
-        
-		$this -> checkURL($ctrl_name, $method);
-        
-		//$view = new View();
-	    $view -> display('head');
-        
-        echo 'контроллер - '.$ctrl_name.'<br/>';
-		echo 'метод - '.$method.'<br/>';
-        
-		$cont = new $ctrl_name();// запуск выбранного контроллера и его метода
-		$cont -> $method();
+		
 				
 		
 		

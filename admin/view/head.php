@@ -12,7 +12,7 @@
 	<?php //} ?>
 </head>
 <body>
-<a href="login/logout" style="float:right; margin-right:40px">выход</a>
+<a href="/logout" style="float:right; margin-right:40px">выход</a>
 <h1>Админ-панель</h1>
 <hr>
 <div style="padding:3px 0px; background-color:#55AFE6;">
@@ -22,7 +22,7 @@
            
            <?php foreach(Config::$routes as $k => $v){
             
-                    if($k !== 'login'){
+                    if($k !== 'logout'){
             
             ?>
            
