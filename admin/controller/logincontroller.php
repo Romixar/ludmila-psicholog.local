@@ -42,10 +42,14 @@ class LoginController extends Controller{
         //die;
     }
     
-    public function logout() {
+    public function actionLogout() {
       
         Session::destroy();
-        header('Location: ../login.php');
+        
+        $this -> view -> display('login');
+        
+        
+//        header('refresh:1;url=/');
         exit();
     }
     

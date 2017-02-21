@@ -46,22 +46,11 @@ class Router{
             
         }
         
-        die;
-//        if(!LoginController::checkLogin()) echo 'неавторизован';
-//        else echo 'авторизован';
-        
-        
-//        die;
-//        if(!LoginController::checkLogin()) $login -> authorized(); // не авторизован
-//		else{
-//            
-//            echo 'авторизован';
-            
-            //header('Location: /admin/');
-            
-        //}
-        
         //die;
+        
+        
+        
+        
         
 		$this -> checkURL($ctrl_name, $method);
         

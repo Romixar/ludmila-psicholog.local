@@ -22,6 +22,7 @@ class Config{
 		'about' => ['about/all','Обо мне'],
 		'services' => ['services/all','Услуги'],
 		'contacts' => ['contacts/all','Контакты'],
+		'login' => ['login/logout','Страница авторизации'],
 	
 	];
     

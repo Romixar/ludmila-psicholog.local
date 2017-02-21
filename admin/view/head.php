@@ -12,7 +12,7 @@
 	<?php //} ?>
 </head>
 <body>
-<a href="logout.php" style="float:right; margin-right:40px">выход</a>
+<a href="login/logout" style="float:right; margin-right:40px">выход</a>
 <h1>Админ-панель</h1>
 <hr>
 <div style="padding:3px 0px; background-color:#55AFE6;">
@@ -20,12 +20,16 @@
     <div style="margin:auto auto; width:55%;">
         <p>
            
-           <?php foreach(Config::$routes as $k => $v){ ?>
+           <?php foreach(Config::$routes as $k => $v){
+            
+                    if($k !== 'login'){
+            
+            ?>
            
-               <button type="submit" name="ctrl" value="<?= $k ?>" class="but"><?= $v[1] ?></button>
+               <button type="submit" name="ctrl" value="<?= $k ?>" class="but"><?= $v[1] ?></button>    
                
-               
-           <?php } ?>
+           <?php    }
+            } ?>
            
         </p>
     </div>
