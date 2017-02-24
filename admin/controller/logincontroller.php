@@ -37,7 +37,7 @@ class LoginController extends Controller{
         if(isset($_SESSION['loggedIn'])){
             
             
-            $view -> display('head');
+            //$view -> display('head');
             //$view -> display('video');
             
             //echo 'start mainController';

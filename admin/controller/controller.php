@@ -404,6 +404,8 @@ class Controller{
 
             //debug($view);
             
+            $view -> display('head');
+            
             $view -> display($tmpl);// отправляю во view
         }
         
