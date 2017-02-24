@@ -12,6 +12,7 @@
                 </thead>
                 <tbody>
                 <?php
+                    
                     foreach($this -> data as $item){
                 ?>
                     <tr> 
@@ -19,8 +20,8 @@
                             <p>Адрес:</p>
                         </td>
                         <td>
-                           <input type="hidden" name="id_0" value="<?= $item['id'] ?>" />
-                            <input class="inptitledesc<?php if($this->data[$i]['addr-err']){?> error<?php } ?>" type="text" name="addr_0" value="<?= $item['addr'] ?>" />
+                           <input type="hidden" name="id_0" value="<?= $item->id ?>" />
+                            <input class="inptitledesc<?php if(!empty($this->data[$i]->addr_err)){?> error<?php } ?>" type="text" name="addr_0" value="<?= $item->addr ?>" />
                         </td>
                     </tr>
 					<tr> 
@@ -28,7 +29,7 @@
                             <p>Телефон:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc<?php if($this->data[$i]['phone-err']){?> error<?php } ?>" type="text" name="phone_0" value="<?= $item['phone'] ?>" />
+                            <input class="inptitledesc<?php if(!empty($this->data[$i]->phone_err)){?> error<?php } ?>" type="text" name="phone_0" value="<?= $item->phone ?>" />
                         </td>
                     </tr>
                     
@@ -37,7 +38,7 @@
                             <p>Skype:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc<?php if($this->data[$i]['srype-err']){?> error<?php } ?>" type="text" name="skype_0" value="<?= $item['skype'] ?>" />
+                            <input class="inptitledesc<?php if(!empty($this->data[$i]->srype_err)){?> error<?php } ?>" type="text" name="skype_0" value="<?= $item->skype ?>" />
                         </td>
                     </tr>
                     
@@ -46,7 +47,7 @@
                             <p>Email:</p>
                         </td>
                         <td>
-                            <input class="inptitledesc<?php if($this->data[$i]['email-err']){?> error<?php } ?>" type="text" name="email_0" value="<?= $item['email'] ?>" />
+                            <input class="inptitledesc<?php if(!empty($this->data[$i]->email_err)){?> error<?php } ?>" type="text" name="email_0" value="<?= $item->email ?>" />
                         </td>
                     </tr>
                     <tr>

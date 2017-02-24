@@ -372,6 +372,7 @@ class Controller{
         //$view = new View();
         $view = new ViewsController();
         
+        $view -> display('head');
         
         
         // вывожу все из БД, если нет ошибок
@@ -404,7 +405,7 @@ class Controller{
 
             //debug($view);
             
-            $view -> display('head');
+            
             
             $view -> display($tmpl);// отправляю во view
         }

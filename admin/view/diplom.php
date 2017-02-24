@@ -19,25 +19,25 @@
                 ?>
                    <tr>
                         <td>
-							<input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
-                            <input type="checkbox" <?php if($this->data[$i]['view']==1){ ?>checked<?php } ?> name="view_<?= $i ?>" value="<?= $this->data[$i]['view'] ?>">
+							<input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]->id ?>" />
+                            <input type="checkbox" <?php if($this->data[$i]->view==1){ ?>checked<?php } ?> name="view_<?= $i ?>" value="<?= $this->data[$i]->view ?>">
                         
                         </td>
                         <td>
                             
-                            <input class="inptitledesc<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" /><br/>
+                            <input class="inptitledesc<?php if($this->data[$i]->title_err){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]->title ?>" /><br/>
                             
                         </td>
                         <td>
                            
-                           <input type="hidden" name="img_<?= $i ?>" value="<?= $this->data[$i]['img'] ?>" />
+                           <input type="hidden" name="img_<?= $i ?>" value="<?= $this->data[$i]->img ?>" />
                            
-                           <img src="../images/gallery/<?= $this->data[$i]['img'] ?>" alt="<?= $this->data[$i]['title'] ?>" title="<?= $this->data[$i]['title'] ?>" width="200px" >
+                           <img src="../images/gallery/<?= $this->data[$i]->img ?>" alt="<?= $this->data[$i]->title ?>" title="<?= $this->data[$i]->title ?>" width="200px" >
                            
                            
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>ctrl=4&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>ctrl=4&id=<?= $this->func ?>_<?= $this->data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>

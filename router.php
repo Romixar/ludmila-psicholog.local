@@ -32,7 +32,7 @@ class Router{
         $tmp = [];
         
         if(count($arr) == 2 && empty($arr[1])){ // запрос пользовательского сайта
-            include 'settings.php';
+            include 'index.php';
             exit();
         }
 

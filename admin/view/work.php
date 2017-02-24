@@ -19,12 +19,12 @@
                     <tr>
                        
                         <td>
-                            <input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]['id'] ?>" />
-							<input class="inptitledesc<?php if($this->data[$i]['title-err']){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]['title'] ?>" />
+                            <input type="hidden" name="id_<?= $i ?>" value="<?= $this->data[$i]->id ?>" />
+							<input class="inptitledesc<?php if(!empty($this->data[$i]->title_err)){?> error<?php } ?>" type="text" name="title_<?= $i ?>" value="<?= $this->data[$i]->title ?>" />
 							
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=4&id=<?= $this->func ?>_<?= $this->data[$i]['id'] ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=4&id=<?= $this->func ?>_<?= $this->data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     
