@@ -2,57 +2,41 @@
 
 class User extends DB{
     
-    
-    protected static $table = 'user';// название таблицы
-    public static $checkBox = false;// флаг наличия чекбоксов
-	
-	public $tmpl = 'login';// шаблон для вывоа данной таблицы
-    
-    public static $auth = ''; //  будет ID авторизованного пользователя
-//    public $login = '';
-//    public $password = '';
-    
-    
-//    public function findUser(){
-//        
-//        debug($this);
-//        
-//        
-//    }
+    public static $table = 'users';
     
     public function __construct(){
-        
         parent::__construct();
-        
     }
     
     
+    
+    
+    
     public function run(){
-        $view = new View();
-
-            
-        $sth = $this->dbh->prepare("SELECT `id` FROM `users` WHERE `login` = :login AND `password` = MD5(:password)");
-
         
-        $sth->execute(array(
+        
+        
+        $sth = $this -> dbh -> prepare("SELECT `id` FROM `users` WHERE `login` = :login AND `password` = MD5(:password)");
+        
+        $sth -> execute(array(
            ':login' => $_POST['login'],
            ':password' => $_POST['password']
         ));
 
-        $data = $sth->fetchAll();        
-
-        if(count($data) == 1){
-
-            Session::init();// создание сессии
-            Session::set('loggedIn', true);// установка значения в сессию
-
-            $view->display('head');
-            //exit('сессия');
-           //header('Location: ../admin');
-        }
-            
-            
+        $data = $sth->fetchAll();
         
+        if(count($data) > 0){
+            
+            $_SESSION['loggedIn'] = true;
+            
+            return;
+
+            
+        }else{
+            
+            return;
+            
+        }
     }
     
     

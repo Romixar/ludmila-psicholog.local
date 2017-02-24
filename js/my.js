@@ -4,7 +4,7 @@ $(function(){
        
        var ctrl = e.target.value;
        
-       location.href = '/'+ ctrl;
+       location.href = '/admin/'+ ctrl;
 
    });
     

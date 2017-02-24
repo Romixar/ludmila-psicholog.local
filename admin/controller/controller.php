@@ -23,9 +23,27 @@ class Controller{
     
     
     
+//    public $view;
+//    
+//    public $data = []; // POST данные
+//    
+//    public function __construct(){
+//        
+//        //session_start();
+//        $this -> view = new ViewsController(); // контроллер видов
+//        
+//        if(isset($_POST)) $this->data = $_POST;
+//
+//        
+//    }
+    
+    
+    
 	
 	public function __construct(){
 		
+        
+        
 		$this -> mes = new Messages();// Объект вывода системных сообщений
         
 		if(!empty($_POST)) $this -> xss($_POST);// отправляю на проверку
@@ -76,31 +94,11 @@ class Controller{
     public function checkData($data){// отправка на проверку
         
         if(isset($data['do_login'])){
+
+            $this -> data = $data;
             
-//            $login = new LoginController();
-//
-//            $login->loginValidate($data);
-            
-            //debug($data);
-            return $data;
-            
-//            if(!$this->loginValidate($data)){
-//                $view = new View();
-//                $view -> display('login');
-//                $this->mes->getMessage('LENG_ERR_LOGIN');
-//            }
-//            else{
-//                
-//                return;
-                //$router = new router();
-                //$router -> run();
-                //return true;
-                //echo 'попал';
-                
-//                $view = new View();
-//                $view -> display('head');
-//            }
-            
+            return;
+
         }
         
         
@@ -304,7 +302,8 @@ class Controller{
 				}
 			}
 		}catch(Exception $e){
-			$view = new View();
+			//$view = new View();
+            $view = new ViewsController();
 			$view -> err = $e -> getMessage();
 			$view -> display('error');
 		}
@@ -334,7 +333,8 @@ class Controller{
     
     public function displayErrorForm($data){// показ формы с ошибками (только одна форма)
         
-        $view = new View();
+        //$view = new View();
+        $view = new ViewsController();
 
         $data = $this -> getKeySubmit($data); // получаю форму БЕЗ кнопки отправить
         
@@ -369,7 +369,8 @@ class Controller{
 
         if(count($this->err) != 0) return;// значит были ошибки от юзера, поэтому ничего не выводим
         
-        $view = new View();
+        //$view = new View();
+        $view = new ViewsController();
         
         
         
@@ -389,8 +390,11 @@ class Controller{
         
             for($j=0; $j<count($arrObj); $j++){
 
-                $view -> data[$j] = $arrObj[$j] -> data;
+                //$view -> data[$j] = $arrObj[$j] -> data;
+                $view -> data[$j] = $arrObj[$j];
             }
+            
+            
 
             if($this->openfield == $class_name) $view -> open = true;// открываю поле в конкретной форме
             else $view -> open = false;
@@ -398,6 +402,8 @@ class Controller{
             // добавлю потом в каждую строку название класса, её создавшего
             $view -> func = $class_name;//также это будет идентификатор для submit
 
+            //debug($view);
+            
             $view -> display($tmpl);// отправляю во view
         }
         

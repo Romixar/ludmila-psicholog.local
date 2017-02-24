@@ -12,8 +12,7 @@
 <hr>
 <div class="divauth">
    
-<!--   login/run-->
-    
+<!--   /admin/main-->
     <form class="login" action="" method="post">
     
         <p>
@@ -26,6 +25,7 @@
         </p>
         
         <button type="submit" name="do_login" value="do_login" >Войти</button>
+<!--        <input type="submit" name="do_login" value="enter" />-->
     
     </form>
                 
