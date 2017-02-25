@@ -367,12 +367,18 @@ class Controller{
 	
 	public function actionAll(){// вывести весь нужный контент (все таблицы на страницу)
 
+        $buttons = 'КНОПКИ';
+        
         if(count($this->err) != 0) return;// значит были ошибки от юзера, поэтому ничего не выводим
         
         //$view = new View();
         $view = new ViewsController();
         
-        $view -> display('head');
+        $view -> data['buttons'] = $buttons;
+        $view -> display('main');
+        
+        
+        //$view -> display('head');
         
         
         // вывожу все из БД, если нет ошибок
