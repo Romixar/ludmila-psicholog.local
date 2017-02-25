@@ -36,19 +36,19 @@ class LoginController extends Controller{
         
         if(isset($_SESSION['loggedIn'])){
             
-            
-            //$view -> display('head');
-            //$view -> display('video');
-            
-            //echo 'start mainController';
-            //die('session true');
-            //$view -> display('main');
-            $main = new MainController();
-            $main -> actionAll();
-            //$this -> view -> render('main');
+
+//            $main = new MainController();
+//            $main -> actionAll();
             
         }else{
-            $view -> display('login');
+            
+            $title = 'Страница авторизации';
+            
+            
+            $view -> vars = compact('title');
+            $view -> render('login');
+            
+            //$view -> display('login');
             //$this-> view -> render('login');
         }
             

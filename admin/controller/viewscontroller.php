@@ -10,7 +10,7 @@ class ViewsController{
     public $vars = []; // переменные для шаблона main
 
 	
-	private function render($tmpl,$data=[]){// подготовить но не выводить view
+	public function render($tmpl,$data=[]){// подготовить но не выводить view
 		
 //        if(file_exists('admin\view\\'.$tmpl.'_tpl.php')){
 //            
@@ -43,7 +43,7 @@ class ViewsController{
     
     public function prerender($tmpl,$data=[]){
         
-        if(file_exists('admin\view\\'.$tmpl.'_tpl.php')){
+        if(file_exists('view/'.$tmpl.'_tpl.php')){
             
             ob_start();
             extract($data); // названия ключей будут переменными
@@ -75,13 +75,13 @@ class ViewsController{
     
     
 	
-	public function __set($k, $v){
-		$this -> data[$k] = $v;
-	}
-	
-	public function __get($k){
-		return $this -> data[$k];
-	}
+//	public function __set($k, $v){
+//		$this -> data[$k] = $v;
+//	}
+//	
+//	public function __get($k){
+//		return $this -> data[$k];
+//	}
 	
 
     
