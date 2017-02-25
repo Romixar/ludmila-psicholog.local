@@ -3,7 +3,7 @@
 
 class MainController extends Controller{// контроллер страницы ГЛАВНАЯ
 
-
+    public $title = 'Управление страницей ГЛАВНАЯ';
 	
 	public function __construct(){
         

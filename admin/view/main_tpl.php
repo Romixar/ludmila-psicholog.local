@@ -22,11 +22,9 @@
 
     <?= $buttons ?>
 
-    <?= $content ?>    
-
 <a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>
    
-   
+   <?= $content ?>
    
    
     
