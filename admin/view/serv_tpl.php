@@ -25,7 +25,7 @@
                             <textarea class="inpdesc<?php if(!empty($data[$i]->description_err)){?> error<?php } ?>" name="description_<?= $i ?>" cols="50" rows="8"><?= $data[$i]->description ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $this->func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=3&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                    
@@ -58,6 +58,6 @@
                 </tbody>
             </table>
             
-       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новую услугу">
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $func ?>" value="Добавить новую услугу">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
 </form>

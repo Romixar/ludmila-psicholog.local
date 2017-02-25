@@ -1,6 +1,6 @@
 <form id="formPrice" action="" method="post" enctype="multipart/form-data" >
-       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое изображение">
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $func ?>" value="Добавить новое изображение">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
             <table>
                <caption>Дипломы и сертификаты</caption>
                 <thead>
@@ -37,7 +37,7 @@
                            
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>ctrl=4&id=<?= $this->func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>ctrl=4&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -48,6 +48,7 @@
                     }
                 ?>
                 <?php
+                    
                     if($this -> open){// проверка нажатия ДОБАВИТЬ
                         $i = count($data);// номер для имени поля
                     ?>
@@ -79,6 +80,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое изображение">
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $func ?>" value="Добавить новое изображение">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
 </form>

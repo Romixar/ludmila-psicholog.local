@@ -15,7 +15,7 @@ class Controller{
     
     public $err = [];// здесь буду собирать ошибки в полях ввода
     
-    public $openfield;// название класса у которого открыть поля для добавления
+    public $openfield;// название класса у которого нажато добавить
     
     public $check;// объект проверка
     
@@ -367,34 +367,28 @@ class Controller{
         if(isset($_SESSION['loggedIn'])){
             $view = new ViewsController();
             return $view -> prerender('buttons');
-            
         }
     }
 	
 	
 	public function actionAll(){// вывести весь нужный контент (все таблицы на страницу)
-
         
-        if(count($this->err) != 0) return;// значит были ошибки от юзера, поэтому ничего не выводим
+        if(count($this->err) != 0) return;// если были ошибки от юзера, ничего не выводим
         
-        //$view = new View();
         $view = new ViewsController();
-        $out = '<a href="/admin/logout" style="float:right; margin-right:40px">выход</a>';
         $buttons = $this->preInit(); // получаю кнопки в админке
-        $view -> vars = compact('buttons','out');
+        $view -> vars = compact('buttons');
         
-        $content = [];
-        // вывожу все из БД, если нет ошибок
-        for($i=0; $i<count($this -> arr); $i++){// иначе выводим из БД, что в ней сохранилось
+        $content = [];// будут шаблоны форм для страницы
+        
+        for($i=0; $i<count($this -> arr); $i++){
             
             $arrObj = $this -> arr[$i] -> selectAll();// получаю массив объектов строк из БД
             
-            
-            $tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
-            $view -> func = '';// здесь будет идентификатор класса, который создает страницу
+            $tmpl = $this -> arr[$i] -> tmpl;// получаю имя шаблона для вывода таблицы
 
-            // получаю имя класса созданного объекта
-            $class_name = $this -> getClassName($this -> arr[$i]);
+            // получаю имя класса созданного объекта это будет ключ для submit
+            $func = $this -> getClassName($this -> arr[$i]);
 
             $data = [];// перед началом второй итерации обнуляю
         
@@ -403,8 +397,11 @@ class Controller{
                 $data[$j] = $arrObj[$j];
                 
             }
-            $content[$tmpl] = $view -> prerender($tmpl,compact('data'));
             
+            $content[$tmpl] = $view -> prerender($tmpl,compact('data','func'));
+            
+            if($this->openfield == $class_name) $view -> open = true;// флаг д/откр поля в конкр форме
+            else $view -> open = false;
 
         }
 

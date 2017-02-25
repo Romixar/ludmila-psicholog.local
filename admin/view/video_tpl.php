@@ -1,6 +1,6 @@
 <form id="formPrice" action="" method="post">
-       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое видео">
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $func ?>" value="Добавить новое видео">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
             <table>
                <caption>Лента видеороликов</caption>
                 <thead>
@@ -45,7 +45,7 @@
                            
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $this->func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -97,6 +97,6 @@
                 ?>
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="add-<?= $this->func ?>" value="Добавить новое видео">
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="add-<?= $func ?>" value="Добавить новое видео">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
 </form>

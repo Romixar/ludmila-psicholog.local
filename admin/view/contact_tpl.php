@@ -61,5 +61,5 @@
                 
                 </tbody>
             </table>
-       <input class="buttsave" type="submit" name="save-<?= $this->func ?>" value="Сохранить изменения">
+       <input class="buttsave" type="submit" name="save-<?= $func ?>" value="Сохранить изменения">
 </form>

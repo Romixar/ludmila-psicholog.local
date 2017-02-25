@@ -2,8 +2,6 @@
 
 class ViewsController{
     
-	public $func = '';// здесь будет идентификатор класса, который создает страницу
-    //public $data = [];
 	public $open = false;// флаг открытия поля для добавления
 	public $err = '';
     
@@ -16,7 +14,6 @@ class ViewsController{
         
         $this -> display('main',compact('content'));
 
-        
 	}
 	
 	public function display($tmpl, $data=[]){// вывести на экран view
@@ -35,10 +32,7 @@ class ViewsController{
             include '/../view/'.$tmpl.'_tpl.php';
             
             return ob_get_clean();
-            
-            
-            
-            
+
         }
         return false;
         
