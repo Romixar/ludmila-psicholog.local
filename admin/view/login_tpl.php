@@ -1,3 +1,4 @@
+<hr/>
 <div class="divauth">
    
 <!--   /admin/main-->
@@ -18,3 +19,4 @@
     </form>
                 
 </div>
+<hr/>

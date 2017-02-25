@@ -19,9 +19,8 @@
    
 <a href="/admin/logout" style="float:right; margin-right:40px">выход</a>
 <h1>Админ-панель</h1>
-<hr>
+
     <?= $buttons ?>
-<hr>
 
     <?= $content ?>    
 

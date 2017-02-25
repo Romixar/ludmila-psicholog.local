@@ -363,22 +363,28 @@ class Controller{
 
     }
 	
+    private function preInit(){
+        if(isset($_SESSION['loggedIn'])){
+            $view = new ViewsController();
+            return $view -> prerender('buttons');
+            
+        }
+    }
 	
 	
 	public function actionAll(){// вывести весь нужный контент (все таблицы на страницу)
 
-        $buttons = 'КНОПКИ';
         
         if(count($this->err) != 0) return;// значит были ошибки от юзера, поэтому ничего не выводим
         
         //$view = new View();
         $view = new ViewsController();
         
-        $view -> data['buttons'] = $buttons;
-        $view -> display('main');
+        $buttons = $this->preInit(); // получаю кнопки в админке
+        $view -> vars = compact('buttons');
+        $view -> render('video');
         
-        
-        //$view -> display('head');
+
         
         
         // вывожу все из БД, если нет ошибок
@@ -403,17 +409,17 @@ class Controller{
             
             
 
-            if($this->openfield == $class_name) $view -> open = true;// открываю поле в конкретной форме
-            else $view -> open = false;
+//            if($this->openfield == $class_name) $view -> open = true;// открываю поле в конкретной форме
+//            else $view -> open = false;
             
             // добавлю потом в каждую строку название класса, её создавшего
-            $view -> func = $class_name;//также это будет идентификатор для submit
+            //$view -> func = $class_name;//также это будет идентификатор для submit
 
             //debug($view);
             
             
             
-            $view -> display($tmpl);// отправляю во view
+            //$view -> display($tmpl);// отправляю во view
         }
         
         

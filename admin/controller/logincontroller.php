@@ -25,31 +25,21 @@ class LoginController extends Controller{
         $view = new ViewsController();
         
         if(isset($this->data['do_login'])) $this -> model -> run();
-//        if(isset($this->data['do_login'])){
-//            
-//            debug($this->data);
-//            echo 'logincontroller';
-//            
-//        }
-        
-        //die;
         
         if(isset($_SESSION['loggedIn'])){
             
 
-//            $main = new MainController();
-//            $main -> actionAll();
+            $main = new MainController();
+            $main -> actionAll();
             
         }else{
             
-            $title = 'Страница авторизации';
-            
-            
+            $title = 'Страница авторизации'; // переменная для шаблона main
+      
             $view -> vars = compact('title');
             $view -> render('login');
             
-            //$view -> display('login');
-            //$this-> view -> render('login');
+
         }
             
 
@@ -61,8 +51,11 @@ class LoginController extends Controller{
         session_destroy();
         
         $view = new ViewsController();
-        $view -> display('login');
-        //$this -> view -> render('login');
+        
+        $title = 'Страница авторизации'; // переменная для шаблона main
+      
+        $view -> vars = compact('title');
+        $view -> render('login');
         
         exit();
     }
