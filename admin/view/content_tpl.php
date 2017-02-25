@@ -1,6 +1,4 @@
 
-    <div>
-
         <?= $video ?>
         <?= $testmon ?>
         <?= $diplom ?>
@@ -8,7 +6,3 @@
         <?= $serv ?>
         <?= $work ?>
         <?= $contact ?>
-
-    </div>
-
-

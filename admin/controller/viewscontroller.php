@@ -11,22 +11,6 @@ class ViewsController{
 
 	
 	public function render($tmpl,$data=[]){// подготовить но не выводить view
-		
-//        if(file_exists('admin\view\\'.$tmpl.'_tpl.php')){
-//            
-//            
-//            ob_start();
-//            
-//            extract($data);
-//            
-//            include '/../view/'.$tmpl.'_tpl.php';
-//            $content = ob_get_contents();
-//            ob_end_clean();
-//
-//            return $content;
-//            
-//            
-//        }
         
         $content = $this->prerender($tmpl,$data);
         
@@ -68,21 +52,6 @@ class ViewsController{
         return $data;
         
     }
-    
-    
-    
-    
-    
-    
-	
-//	public function __set($k, $v){
-//		$this -> data[$k] = $v;
-//	}
-//	
-//	public function __get($k){
-//		return $this -> data[$k];
-//	}
-	
 
     
     

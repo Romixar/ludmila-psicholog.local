@@ -16,15 +16,18 @@
 </head>
 
 <body>
-   
-<a href="/admin/logout" style="float:right; margin-right:40px">выход</a>
+
+<?= $out ?>
+
 <h1>Админ-панель</h1>
 
     <?= $buttons ?>
-
-<a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>
+    
+    <a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>
+<div id="content">
+    <?= $content ?>
+</div>   
    
-   <?= $content ?>
    
    
     

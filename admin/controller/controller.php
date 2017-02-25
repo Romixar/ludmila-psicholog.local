@@ -379,9 +379,9 @@ class Controller{
         
         //$view = new View();
         $view = new ViewsController();
-        
+        $out = '<a href="/admin/logout" style="float:right; margin-right:40px">выход</a>';
         $buttons = $this->preInit(); // получаю кнопки в админке
-        $view -> vars = compact('buttons');
+        $view -> vars = compact('buttons','out');
         
         $content = [];
         // вывожу все из БД, если нет ошибок
