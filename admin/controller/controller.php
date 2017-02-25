@@ -382,9 +382,6 @@ class Controller{
         
         $buttons = $this->preInit(); // получаю кнопки в админке
         $view -> vars = compact('buttons');
-        //$view -> render('video');
-        
-
         
         $content = [];
         // вывожу все из БД, если нет ошибок
@@ -399,42 +396,19 @@ class Controller{
             // получаю имя класса созданного объекта
             $class_name = $this -> getClassName($this -> arr[$i]);
 
-            //$view -> data = [];// перед началом второй итерации обнуляю
             $data = [];// перед началом второй итерации обнуляю
         
             for($j=0; $j<count($arrObj); $j++){
 
-                //$view -> data[$j] = $arrObj[$j] -> data;
-                //$view -> data[$j] = $arrObj[$j];
                 $data[$j] = $arrObj[$j];
                 
-                
-                
-                
             }
-            //debug($data);
-            //echo $tmpl.'<br/>';
-            //echo $view -> prerender($tmpl,$data);
-            
+            $content[$tmpl] = $view -> prerender($tmpl,compact('data'));
             
 
-//            if($this->openfield == $class_name) $view -> open = true;// открываю поле в конкретной форме
-//            else $view -> open = false;
-            
-            // добавлю потом в каждую строку название класса, её создавшего
-            //$view -> func = $class_name;//также это будет идентификатор для submit
-
-            //debug($view);
-            
-            
-            
-            //$view -> display($tmpl);// отправляю во view
         }
-        //debug($data);
-        $view -> render('testmon',compact('data'));
-        //debug($content);
-        //$view -> render('content',$content);
-        
+
+        $view -> render('content',$content);
         
 	}
 	
