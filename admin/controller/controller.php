@@ -262,35 +262,33 @@ class Controller{
     
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
 
-        
-        debug($get);die;
-        
 		try{// отлов исключений при удалении из базы данных		
-			if(strpos($get['id'],'_')){
-                
-				$arr = explode('_',$get['id']);
-				if(count($arr) == 2){
 
-					if(!$id = $this -> isIntNum($arr[1])) return false;
-                    
-					if($this -> checkClassName($arr[0])){
-						
-						$myclass = new $arr[0]();// созд объект, у которого удалить элемент
-                        
-						// проверить есть ли такой id и удалить
-						if($myclass -> checkID($id)) $this -> mes -> getMessage('SUC_DEL');
-                        //else $this -> mes -> getMessage('ERR_DEL');
-					}
-				}
-			}
+            if($this->isIntNum($get['id']) && $this->checkClassName($get['mod'])){
+                
+                if($model = $this->findAndDelModel($get))
+                    $this -> sysmes = $this -> mes -> getMessage('SUC_DEL');
+                else return false;
+                
+            }
+            
+            
 		}catch(Exception $e){
+            
 			//$view = new View();
-            $view = new ViewsController();
-			$view -> err = $e -> getMessage();
-			$view -> display('error');
+//            $view = new ViewsController();
+//			$view -> err = $e -> getMessage();
+//			$view -> display('error');
 		}
 	}
 
+    
+    private function findAndDelModel($get){
+        
+        $model = new $get['mod']();// созд объект, у которого удалить элемент
+        if($model -> checkID($get['id'])) return true;// проверить есть ли такой id и удалить
+        return false;
+    }
     
     
 	private function checkClassName($cl_name_str){// проверяю наличие класса

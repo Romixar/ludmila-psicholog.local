@@ -29,7 +29,7 @@
                             <input class="inpprice<?php if(!empty($data[$i]->duration_err)){?> error<?php } ?>" type="text" name="duration_<?= $i ?>" value="<?= $data[$i]->duration ?>" />
                         </td>
                         <td>
-                            <a href="<?= $url ?>?ctrl=3&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?mod=<?= $func ?>&id=<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                 <?php

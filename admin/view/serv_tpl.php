@@ -25,7 +25,7 @@
                             <textarea class="inpdesc<?php if(!empty($data[$i]->description_err)){?> error<?php } ?>" name="description_<?= $i ?>" cols="50" rows="8"><?= $data[$i]->description ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= $url ?>?ctrl=3&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?mod=<?= $func ?>&id=<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                    

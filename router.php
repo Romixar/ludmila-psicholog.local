@@ -20,11 +20,9 @@ class Router{
         //echo 'загрузка роутера';
         session_start();
         
-        $url = $_SERVER['REQUEST_URI'];
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // без GET параметров
 
         $arr = explode('/',$url);
-        
-        
         
         $reg = '/[a-zA-Z]*/';
         

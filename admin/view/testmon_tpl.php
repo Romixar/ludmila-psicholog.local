@@ -37,7 +37,7 @@
                             <textarea class="inpdesc<?php if(!empty($data[$i]->body_err)){?> error<?php } ?>" name="body_<?= $i ?>" cols="50" rows="8"><?= $data[$i]->body ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= $url ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?mod=<?= $func ?>&id=<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>

@@ -45,7 +45,7 @@
                            
                         </td>
                         <td>
-                            <a href="<?= $url ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?mod=<?= $func ?>&id=<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
