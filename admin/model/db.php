@@ -138,7 +138,7 @@ class DB{
 		return $this -> query($sql, $params);
 		
 	}
-	// $vals=false,
+    
 	public function insert($cols, $params){
 		
 		$sql = 'INSERT INTO `'.static::$table.'` ('.implode(', ',$cols).') VALUES (:'.implode(', :',$cols).')';

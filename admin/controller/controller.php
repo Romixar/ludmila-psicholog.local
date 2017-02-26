@@ -104,8 +104,6 @@ class Controller{
             $this->sysmes .= $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
         }
         $newerr = $this -> getDoubleArr($this -> err);//получаю двум-й массив кодов ошибок
-        
-        
 
         // создание доп. элемента с пометкой в ключе об ошибке для вывода в форму
         for($i=0; $i<count($data); $i++){
@@ -113,8 +111,6 @@ class Controller{
                 if(isset($newerr[$i][$key])) $data[$i][$key.'_err'] = 1;
             }
         }
-        
-        
         //  ... теперь направить обратно в форму с указанием ошибок...
         return $data;
         
@@ -161,7 +157,6 @@ class Controller{
             $this -> displayErrorForm($data);// отправка на вывод массив с ошибками и кнопкой отправитть
             return;
         }
-        
         // если нет ошибок
         $data[implode('-',$this -> arr_func)] = 'кнопка отправить';// вернуть наместо кнопку
         
@@ -192,9 +187,8 @@ class Controller{
     // и проверка какой форме открыть поле для добавления, при нажании ДОБАВИТЬ
 	private function selectAction($data){// выбор действия по ключу кнопки отправить
         
-        //$newdata = $this -> getKeySubmit($data, $arr_func);// получаю ключ кнопки и массив без него
         $newdata = $this -> getKeySubmit($data);// получаю ключ кнопки и массив без него
-		//$this -> cl = new $arr_func[1]();//беру название класса, кот-й запустить
+        
 		$this -> cl = new $this -> arr_func[1]();//беру название класса, кот-й запустить
         
 		// для actionAll название формы, в кот-й открыть поле
@@ -206,10 +200,18 @@ class Controller{
 	
 	public function save($data){// определим добавить в БД или только обновить
         
+        
+        
 		$data = $this -> selectAction($data);// получаю без submit массив для внесения в БД
+        
+        
+        
         
         // запрос кол-ва записей в БД у полученного в selectAction объекта
 		$count = $this -> cl -> countRow();
+        
+        
+        
         
 		if($count == count($data)) $this -> update($data);// отправляю на обновление            
         else{
@@ -224,6 +226,9 @@ class Controller{
 	
     
 	public function update($data){
+        
+        
+        
 
 		for($i=0; $i<(count($data)); $i++){
 			
@@ -238,13 +243,16 @@ class Controller{
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
 			}
+    
 			$res = $this -> cl -> update($arr, $params);// построчная отправка на UPDATE
 		}
+        
         // проверка последнего ответа
 		if(!$res){
-            if($this -> arr_func[0] != 'add')
-                $this -> mes -> getMessage('SUC_SAVE',$this -> getClassName($this -> cl));
-        }else $this -> mes -> getMessage('ERR_SAVE');
+            if($this -> arr_func[0] != 'add'){// чтобы не вывелось при нажатии ДОБАВИТЬ
+                $this->sysmes = $this->mes->getMessage('SUC_SAVE',$this->getClassName($this->cl));
+            }
+        }else $this->sysmes = $this -> mes -> getMessage('ERR_SAVE');
 
 	}
     
@@ -368,11 +376,13 @@ class Controller{
     }
 	
     
-    private function prepareTmpl(&$buttons, &$title){
+    private function prepareTmpl(&$buttons, &$title, &$mes){
         $view = new ViewsController();
         $buttons = $view -> prerender('buttons');// получаю кнопки в админке
         $cl_name = get_class($this);// title для текущ страницы
         $title = $cl_name::$title;   // title для текущ страницы
+        if($this->sysmes) $mes = $this->sysmes;
+        else $mes = '';
     }
 	
 	
@@ -380,11 +390,11 @@ class Controller{
         
         if(count($this->err) != 0) return;// если были ошибки от юзера, ничего не выводим
         
-        $this->prepareTmpl($buttons, $title);
+        $this->prepareTmpl($buttons, $title, $mes);
         
         $view = new ViewsController();
         
-        $view -> vars = compact('buttons','title');
+        $view -> vars = compact('buttons','title','mes');
         
         $content = [];// будут шаблоны форм для страницы
         
@@ -399,19 +409,15 @@ class Controller{
 
             $data = [];// перед началом второй итерации обнуляю
         
-            for($j=0; $j<count($arrObj); $j++){
+            for($j=0; $j<count($arrObj); $j++) $data[$j] = $arrObj[$j];
+            
+            if($this->openfield == $func) $open = true;// флаг д/откр поля в конкр форме
+            else $open = false;
+            
+            $content[$tmpl] = $view -> prerender($tmpl,compact('data','func','open'));
 
-                $data[$j] = $arrObj[$j];
-                
-            }
-            
-            $content[$tmpl] = $view -> prerender($tmpl,compact('data','func'));
-            
-            if($this->openfield == $class_name) $view -> open = true;// флаг д/откр поля в конкр форме
-            else $view -> open = false;
 
         }
-
         $view -> render('content',$content);
         
 	}

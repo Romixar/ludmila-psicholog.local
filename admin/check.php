@@ -3,16 +3,9 @@
 class Check{// проверка входящих данных
     
     
-    public $err = [];// массив ошибок
-    
-    public $mes;// системные сообщения
-    
-    public function __construct(){
-        $this -> mes = new Messages();
-    }
+    public $err = [];// собираю массив ошибок
     
 
-    
     
     public function checkData($data){// отправляю на проверку каждое поле
         
