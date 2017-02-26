@@ -45,7 +45,7 @@
                            
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -56,7 +56,7 @@
                     }
                 ?>
                 <?php
-                    if($this -> open){// проверка нажатия ДОБАВИТЬ
+                    if($open){// проверка нажатия ДОБАВИТЬ
                         $i = count($data);// номер для имени поля
                     ?>
                         <tr>

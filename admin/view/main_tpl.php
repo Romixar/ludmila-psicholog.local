@@ -21,7 +21,6 @@
     
     <a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>
     
-    <?php// debug($mes); ?>
     <?= $mes ?>
     
 <div id="content">

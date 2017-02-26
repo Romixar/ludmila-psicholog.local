@@ -21,8 +21,7 @@ class Router{
         session_start();
         
         $url = $_SERVER['REQUEST_URI'];
-         
-        
+
         $arr = explode('/',$url);
         
         

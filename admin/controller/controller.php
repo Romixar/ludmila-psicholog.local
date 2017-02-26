@@ -12,9 +12,8 @@ class Controller{
 	
 	public $mes;// Объект вывода системных сообщений
     public $sysmes = ''; // шаблон системного сообщения
-	public $login;// Объект 
     
-    public $err = [];// здесь буду собирать ошибки в полях ввода
+    public $err = [];// здесь будут коды ошибок в полях ввода
     
     public $openfield;// название класса у которого нажато добавить
     
@@ -199,19 +198,10 @@ class Controller{
 		
 	
 	public function save($data){// определим добавить в БД или только обновить
-        
-        
-        
+
 		$data = $this -> selectAction($data);// получаю без submit массив для внесения в БД
-        
-        
-        
-        
         // запрос кол-ва записей в БД у полученного в selectAction объекта
 		$count = $this -> cl -> countRow();
-        
-        
-        
         
 		if($count == count($data)) $this -> update($data);// отправляю на обновление            
         else{
@@ -226,9 +216,6 @@ class Controller{
 	
     
 	public function update($data){
-        
-        
-        
 
 		for($i=0; $i<(count($data)); $i++){
 			
@@ -243,10 +230,8 @@ class Controller{
 					else $arr[] = '`'.$key."` = '".$val."'";// если текстовое значение
 				}
 			}
-    
 			$res = $this -> cl -> update($arr, $params);// построчная отправка на UPDATE
 		}
-        
         // проверка последнего ответа
 		if(!$res){
             if($this -> arr_func[0] != 'add'){// чтобы не вывелось при нажатии ДОБАВИТЬ
@@ -268,8 +253,8 @@ class Controller{
             $params[':'.$key] = $val;// указываю элемент без кавычек
 		}
         if($this -> cl -> insert($cols, $params)) // должен прийти ID последней доб записи
-            $this -> mes -> getMessage('SUC_ADD',$this -> getClassName($this -> cl));
-        else $this -> mes -> getMessage('ERR_ADD');
+            $this->sysmes = $this -> mes -> getMessage('SUC_ADD',$this -> getClassName($this -> cl));
+        else $this->sysmes = $this -> mes -> getMessage('ERR_ADD');
         
     }
 	
@@ -277,6 +262,9 @@ class Controller{
     
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
 
+        
+        debug($get);die;
+        
 		try{// отлов исключений при удалении из базы данных		
 			if(strpos($get['id'],'_')){
                 
@@ -381,8 +369,11 @@ class Controller{
         $buttons = $view -> prerender('buttons');// получаю кнопки в админке
         $cl_name = get_class($this);// title для текущ страницы
         $title = $cl_name::$title;   // title для текущ страницы
-        if($this->sysmes) $mes = $this->sysmes;
-        else $mes = '';
+        $mes = ($this->sysmes) ? $this->sysmes : '';
+    }
+    
+    private function getURL(){
+        return Config::HOST_ADDRESS.$_SERVER['REQUEST_URI'];
     }
 	
 	
@@ -414,7 +405,9 @@ class Controller{
             if($this->openfield == $func) $open = true;// флаг д/откр поля в конкр форме
             else $open = false;
             
-            $content[$tmpl] = $view -> prerender($tmpl,compact('data','func','open'));
+            $url = $this->getURL();
+            
+            $content[$tmpl] = $view -> prerender($tmpl,compact('data','func','open','url'));
 
 
         }

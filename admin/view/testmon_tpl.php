@@ -37,7 +37,7 @@
                             <textarea class="inpdesc<?php if(!empty($data[$i]->body_err)){?> error<?php } ?>" name="body_<?= $i ?>" cols="50" rows="8"><?= $data[$i]->body ?></textarea>
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?ctrl=1&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     <tr>
@@ -52,7 +52,7 @@
                     
                     
                     
-                    if($this -> open){// проверка нажатия ДОБАВИТЬ УСЛУГУ
+                    if($open){// проверка нажатия ДОБАВИТЬ УСЛУГУ
                         $i = count($data);// номер для имени поля
                     ?>
                         <tr>

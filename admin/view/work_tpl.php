@@ -24,7 +24,7 @@
 							
                         </td>
                         <td>
-                            <a href="<?= Config::HOST_ADDRESS ?>?ctrl=4&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
+                            <a href="<?= $url ?>?ctrl=4&id=<?= $func ?>_<?= $data[$i]->id ?>">Удалить</a>
                         </td>
                     </tr>
                     
@@ -32,7 +32,7 @@
                 <?php
                     }
                     
-                    if($this -> open){
+                    if($open){
                         $i = count($data);// количество элементов
                 ?>
                         <tr> 
