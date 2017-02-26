@@ -3,7 +3,7 @@
 class ViewsController{
     
 	public $open = false;// флаг открытия поля для добавления
-	public $err = '';
+	//public $err = '';
     
     public $vars = []; // переменные для шаблона main
 
@@ -45,6 +45,10 @@ class ViewsController{
         }
         return $data;
         
+    }
+    
+    public function __set($k,$v){
+        $this->$k = $v;
     }
 
     

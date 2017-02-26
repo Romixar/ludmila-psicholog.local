@@ -6,17 +6,19 @@ class Messages{// для вывода системных сообщений
 		
 		$row = parse_ini_file('../messages/messages.ini');
 		
-		$view = new View();
+		$view = new ViewsController();
 		
-        //$view -> err = $row[$code];
+        $view -> err = $row[$code];
+        
+        //debug($view -> err);die;
         
         // добавлю к ключю код конкретного сообщения от класса
         if($cl_name) $view -> err = $row[strtoupper(substr($cl_name,0,4)).'_'.$code];
         else $view -> err = $row[$code];
         
         // если сообщение не ошибка то вывожу шаблон success
-		if(strpos($code,'ERR') === false) $view -> display('success');
-		else $view -> display('error');
+		if(strpos($code,'ERR') === false) return $view -> prerender('message',['class'=>'suc']);
+		else return $view -> prerender('message',['class'=>'err']);
 		
 	}
 	

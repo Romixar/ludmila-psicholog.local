@@ -20,6 +20,9 @@
     <?= $buttons ?>
     
     <a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>
+    
+    <?= $mes ?>
+    
 <div id="content">
     <?= $content ?>
 </div>   

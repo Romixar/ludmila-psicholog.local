@@ -11,6 +11,7 @@ class Prices extends DB{
 	public $tmpl = 'price';// шаблон для вывода данной таблицы
 	
 	
+
 	
 }
 

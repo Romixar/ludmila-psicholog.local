@@ -11,6 +11,7 @@ class Controller{
 	public $arr = [];// массив для экземпяров объектов подмоделей (в них названий шаблона)
 	
 	public $mes;// Объект вывода системных сообщений
+    public $sysmes; // шаблон системного сообщения
 	public $login;// Объект 
     
     public $err = [];// здесь буду собирать ошибки в полях ввода
@@ -96,12 +97,8 @@ class Controller{
     
     public function validateAndCheck($data){
         $check = new Check();// Объект для проверки входных данных
-        
-        
 		        
         $data = $check -> checkData($data);// отправляю на проверку типа данных
-        
-        debug($data);die;
 
         $this -> err = $check -> err;// получаю массив ошибок
 
@@ -115,16 +112,20 @@ class Controller{
         $errors = array_unique($this -> err);// отфильтровывваю повторные ошибки
 
         foreach($errors as $k => $val){
-            $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
+            $this->sysmes = $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
         }
         $newerr = $this -> getDoubleArr($this -> err);//получаю двум-й массив кодов ошибок
+        
+        
 
         // создание доп. элемента с пометкой в ключе об ошибке для вывода в форму
         for($i=0; $i<count($data); $i++){
             foreach($data[$i] as $key => $val){
-                if(isset($newerr[$i][$key])) $data[$i][$key.'-err'] = 1;
+                if(isset($newerr[$i][$key])) $data[$i][$key.'_err'] = 1;
             }
         }
+        
+        
         //  ... теперь направить обратно в форму с указанием ошибок...
         return $data;
         
@@ -167,7 +168,7 @@ class Controller{
             $data = $this -> getErrors($data);// объединяю с массивом полей ошибки, если есть
 
             $data[implode('-',$this -> arr_func)] = 'кнопка отправить';// вернуть наместо кнопку
-
+            
             $this -> displayErrorForm($data);// отправка на вывод массив с ошибками и кнопкой отправитть
             return;
         }
@@ -329,10 +330,21 @@ class Controller{
     
     public function displayErrorForm($data){// показ формы с ошибками (только одна форма)
         
-        //$view = new View();
-        $view = new ViewsController();
+        
+        
+        
+        
+        //$view = new ViewsController();
+        
+        
+        
 
         $data = $this -> getKeySubmit($data); // получаю форму БЕЗ кнопки отправить
+        
+        
+        
+        
+        
         
         for($i=0; $i<count($this->arr); $i++){// перебор двух объектов страницы
 
@@ -340,12 +352,36 @@ class Controller{
                     
                 $tmpl = $this -> arr[$i] -> tmpl;// получаю свойство имя шаблона для вывода таблицы
                 
+                $func = $this -> arr_func[1];
+                
+                $tmp = [];
+                
+                
                 for($j=0; $j<count($data); $j++){
                     
-                    $view -> data[$j] = $data[$j];// добавляю массив с ошибками в объект
+                    $view = new ViewsController();
+                    
+                    foreach($data[$j] as $k => $v){
+                        
+                        $view -> $k = $v;
+                        
+                        
+                        
+                    }
+                    $tmp[$j] = $view; // создаю массив объектов
+                    
                 }
+                
+                
+                $data = $tmp;
+
+                
+                $content = $view -> prerender($tmpl,compact('data','func'));
             }
         }
+        
+        
+        
         for($i=0; $i<count($this -> arr_func); $i++){// удаляю тот объект формы, в которой были ошибки
             if($this -> arr_func[1] == $this->getClassName($this->arr[$i])){
                 $num_el = $i; // получаю номер удаляемого жлемента
@@ -353,8 +389,20 @@ class Controller{
             }
         }
         
-        $view -> func = $this -> arr_func[1];//идентификатор для submit
-        $view -> display($tmpl);// вывод обратно неверно заполненной формы
+        $view = new ViewsController();
+        $buttons = $this->preInit(); // получаю кнопки в админке
+        $title = $this -> title;   // title для текущ страницы
+        $mes = $this -> sysmes;   // сообщение об ошибке
+        $view -> vars = compact('buttons','title','mes');
+        
+        
+        
+//        echo $content;
+//        debug($data);die;
+        
+        $view -> render('content',[$tmpl=>$content]);
+        //$view -> func = $this -> arr_func[1];//идентификатор для submit
+        //$view -> display($tmpl);// вывод обратно неверно заполненной формы
         sort($this->arr);// отсортировка, чтобы номера ключей стали с 0
 
     }
