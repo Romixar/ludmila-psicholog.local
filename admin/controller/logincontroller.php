@@ -3,7 +3,7 @@
 class LoginController extends Controller{
     
     public $model;
-    
+    public $title = 'Страница авторизации';
     
     
     public function __construct(){
@@ -34,7 +34,7 @@ class LoginController extends Controller{
             
         }else{
             
-            $title = 'Страница авторизации'; // переменная для шаблона main
+            $title = $this->title; // переменная для шаблона main
       
             $view -> vars = compact('title');
             $view -> render('login');
@@ -52,7 +52,7 @@ class LoginController extends Controller{
         
         $view = new ViewsController();
         
-        $title = 'Страница авторизации'; // переменная для шаблона main
+        $title = $this->title; // переменная для шаблона main
       
         $view -> vars = compact('title');
         $view -> render('login');

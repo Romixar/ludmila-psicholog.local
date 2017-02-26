@@ -17,25 +17,12 @@ class Controller{
     
     public $openfield;// название класса у которого нажато добавить
     
-    public $check;// объект проверка
+    //public $check;// объект проверка
     
     public $arr_func = [];// массив ключа по "-", у кнопки отправить на конкретной форме
     
-    
-    
-//    public $view;
-//    
-//    public $data = []; // POST данные
-//    
-//    public function __construct(){
-//        
-//        //session_start();
-//        $this -> view = new ViewsController(); // контроллер видов
-//        
-//        if(isset($_POST)) $this->data = $_POST;
-//
-//        
-//    }
+    public $title = ''; // Title текущей страницы
+
     
     
     
@@ -46,6 +33,8 @@ class Controller{
         
 		$this -> mes = new Messages();// Объект вывода системных сообщений
         
+        //$this -> check = new Check();// Объект для проверки входных данных
+        
 		if(!empty($_POST)) $this -> xss($_POST);// отправляю на проверку
 		
         // true флаг, то что это GET id массив
@@ -55,7 +44,7 @@ class Controller{
 	
 	public function xss($data, $flag=false){
 		
-        //debug($data);
+        
         
 		if(is_array($data)){
 			$req = '/script|http|www\.|\'|\`|SELECT|UNION|UPDATE|exe|exec|CREATE|DELETE|INSERT|tmp/i';
@@ -95,21 +84,28 @@ class Controller{
         
         if(isset($data['do_login'])){
 
-            $this -> data = $data;
+            $this -> data = $data;// передаю во внутр массив для логин контроллера
             
             return;
 
+        }else{
+            $this->validateAndCheck($data);
         }
         
-        
+    }
+    
+    public function validateAndCheck($data){
         $check = new Check();// Объект для проверки входных данных
+        
+        
 		        
         $data = $check -> checkData($data);// отправляю на проверку типа данных
+        
+        debug($data);die;
 
         $this -> err = $check -> err;// получаю массив ошибок
 
         $this -> checkBox($this -> getDoubleArr($data));// на проверку нужно ли установить чекбоксы
-        
     }
     
     
@@ -377,7 +373,8 @@ class Controller{
         
         $view = new ViewsController();
         $buttons = $this->preInit(); // получаю кнопки в админке
-        $view -> vars = compact('buttons');
+        $title = $this -> title;   // title для текущ страницы
+        $view -> vars = compact('buttons','title');
         
         $content = [];// будут шаблоны форм для страницы
         

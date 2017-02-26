@@ -3,16 +3,17 @@
 
 class MainController extends Controller{// контроллер страницы ГЛАВНАЯ
 
-    public $title = 'Управление страницей ГЛАВНАЯ';
 	
 	public function __construct(){
         
         
 		$vid = new Videos(); // инициализирую подмодель таблицы
 		$testm = new Testmonials();
-		parent::__construct($this -> arr = [$vid,$testm]);// отправляю в родит-й конструктор эти объекты
         
-
+        // отправляю в родит-й конструктор эти объекты
+		parent::__construct($this -> arr = [$vid,$testm]);
+        
+        $this->title = 'Управление страницей ГЛАВНАЯ';
         
 	}
 

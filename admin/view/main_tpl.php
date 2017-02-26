@@ -17,10 +17,6 @@
 
 <body>
 
-<?//= $out ?>
-
-<!--<h1>Админ-панель</h1>-->
-
     <?= $buttons ?>
     
     <a href="/" style="float:right; margin-right:40px" target="_blank">Открыть сайт в новом окне</a>

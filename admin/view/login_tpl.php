@@ -1,3 +1,4 @@
+<h1>Админ-панель</h1>
 <hr/>
 <div class="divauth">
    
@@ -14,7 +15,6 @@
         </p>
         
         <button type="submit" name="do_login" value="do_login" >Войти</button>
-<!--        <input type="submit" name="do_login" value="enter" />-->
     
     </form>
                 

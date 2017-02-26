@@ -7,56 +7,42 @@ function __autoload($cl_name){
     
     if(file_exists($file)){
         
-        include $file;
+        include_once $file;
         
     }
     
     if(file_exists('../'.$file)){
         
-        include '../'.$file;
+        include_once '../'.$file;
         
     }
     
     if(file_exists(__DIR__.'/admin/'.$file)){
         
-        include __DIR__.'/admin/'.$file;
+        include_once __DIR__.'/admin/'.$file;
         
     }
     
     if(file_exists(__DIR__.'/admin/model/'.$file)){
         
-        include __DIR__.'/admin/model/'.$file;
+        include_once __DIR__.'/admin/model/'.$file;
         
     }
     
     if(file_exists(__DIR__.'/admin/controller/'.$file)){
         
-        include __DIR__.'/admin/controller/'.$file;
+        include_once __DIR__.'/admin/controller/'.$file;
         
     }
     
     if(file_exists(__DIR__.'/admin/view/'.$file)){
         
-        include __DIR__.'/admin/view/'.$file;
+        include_once __DIR__.'/admin/view/'.$file;
         
     }
     
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
