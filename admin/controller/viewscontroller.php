@@ -3,7 +3,7 @@
 class ViewsController{
     
 	public $open = false;// флаг открытия поля для добавления
-	//public $err = '';
+	public $err = '';  // сообщения об ошибках
     
     public $vars = []; // переменные для шаблона main
 

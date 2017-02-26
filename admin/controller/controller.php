@@ -11,18 +11,15 @@ class Controller{
 	public $arr = [];// массив для экземпяров объектов подмоделей (в них названий шаблона)
 	
 	public $mes;// Объект вывода системных сообщений
-    public $sysmes; // шаблон системного сообщения
+    public $sysmes = ''; // шаблон системного сообщения
 	public $login;// Объект 
     
     public $err = [];// здесь буду собирать ошибки в полях ввода
     
     public $openfield;// название класса у которого нажато добавить
     
-    //public $check;// объект проверка
-    
     public $arr_func = [];// массив ключа по "-", у кнопки отправить на конкретной форме
-    
-    public $title = ''; // Title текущей страницы
+
 
     
     
@@ -30,11 +27,7 @@ class Controller{
 	
 	public function __construct(){
 		
-        
-        
 		$this -> mes = new Messages();// Объект вывода системных сообщений
-        
-        //$this -> check = new Check();// Объект для проверки входных данных
         
 		if(!empty($_POST)) $this -> xss($_POST);// отправляю на проверку
 		
@@ -84,14 +77,10 @@ class Controller{
     public function checkData($data){// отправка на проверку
         
         if(isset($data['do_login'])){
-
             $this -> data = $data;// передаю во внутр массив для логин контроллера
-            
             return;
-
-        }else{
-            $this->validateAndCheck($data);
         }
+        $this->validateAndCheck($data);
         
     }
     
@@ -112,7 +101,7 @@ class Controller{
         $errors = array_unique($this -> err);// отфильтровывваю повторные ошибки
 
         foreach($errors as $k => $val){
-            $this->sysmes = $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
+            $this->sysmes .= $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
         }
         $newerr = $this -> getDoubleArr($this -> err);//получаю двум-й массив кодов ошибок
         
@@ -179,7 +168,7 @@ class Controller{
         $this -> save($data);// определит на UPDATE или INSERT идут данные
     }
     
-    //   , &$arr_func
+    
     private function getKeySubmit($data){// вернуть параметры (name) кнопки в массиве
 
         //$arr_func = [];// здесь будет ключ кнопки отправить, разбитый по дефису 
@@ -329,22 +318,10 @@ class Controller{
     
     
     public function displayErrorForm($data){// показ формы с ошибками (только одна форма)
-        
-        
-        
-        
-        
-        //$view = new ViewsController();
-        
-        
-        
+
 
         $data = $this -> getKeySubmit($data); // получаю форму БЕЗ кнопки отправить
-        
-        
-        
-        
-        
+
         
         for($i=0; $i<count($this->arr); $i++){// перебор двух объектов страницы
 
@@ -354,33 +331,21 @@ class Controller{
                 
                 $func = $this -> arr_func[1];
                 
-                $tmp = [];
-                
-                
                 for($j=0; $j<count($data); $j++){
                     
                     $view = new ViewsController();
                     
-                    foreach($data[$j] as $k => $v){
-                        
-                        $view -> $k = $v;
-                        
-                        
-                        
-                    }
+                    foreach($data[$j] as $k => $v) $view -> $k = $v;
+                    
                     $tmp[$j] = $view; // создаю массив объектов
                     
                 }
                 
-                
                 $data = $tmp;
-
                 
                 $content = $view -> prerender($tmpl,compact('data','func'));
             }
         }
-        
-        
         
         for($i=0; $i<count($this -> arr_func); $i++){// удаляю тот объект формы, в которой были ошибки
             if($this -> arr_func[1] == $this->getClassName($this->arr[$i])){
@@ -389,29 +354,25 @@ class Controller{
             }
         }
         
-        $view = new ViewsController();
-        $buttons = $this->preInit(); // получаю кнопки в админке
-        $title = $this -> title;   // title для текущ страницы
-        $mes = $this -> sysmes;   // сообщение об ошибке
+        $this->prepareTmpl($buttons, $title); // получить шаблон кнопок и заголовок
+        
+        $mes = $this -> sysmes;   // сообщения об ошибках
+
         $view -> vars = compact('buttons','title','mes');
-        
-        
-        
-//        echo $content;
-//        debug($data);die;
+
         
         $view -> render('content',[$tmpl=>$content]);
-        //$view -> func = $this -> arr_func[1];//идентификатор для submit
-        //$view -> display($tmpl);// вывод обратно неверно заполненной формы
+
         sort($this->arr);// отсортировка, чтобы номера ключей стали с 0
 
     }
 	
-    private function preInit(){
-        if(isset($_SESSION['loggedIn'])){
-            $view = new ViewsController();
-            return $view -> prerender('buttons');
-        }
+    
+    private function prepareTmpl(&$buttons, &$title){
+        $view = new ViewsController();
+        $buttons = $view -> prerender('buttons');// получаю кнопки в админке
+        $cl_name = get_class($this);// title для текущ страницы
+        $title = $cl_name::$title;   // title для текущ страницы
     }
 	
 	
@@ -419,9 +380,10 @@ class Controller{
         
         if(count($this->err) != 0) return;// если были ошибки от юзера, ничего не выводим
         
+        $this->prepareTmpl($buttons, $title);
+        
         $view = new ViewsController();
-        $buttons = $this->preInit(); // получаю кнопки в админке
-        $title = $this -> title;   // title для текущ страницы
+        
         $view -> vars = compact('buttons','title');
         
         $content = [];// будут шаблоны форм для страницы

@@ -8,7 +8,7 @@ class Messages{// для вывода системных сообщений
 		
 		$view = new ViewsController();
 		
-        $view -> err = $row[$code];
+        //$view -> err = $row[$code];
         
         //debug($view -> err);die;
         

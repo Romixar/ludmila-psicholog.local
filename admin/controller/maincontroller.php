@@ -3,6 +3,7 @@
 
 class MainController extends Controller{// контроллер страницы ГЛАВНАЯ
 
+    public static $title = 'Управление страницей ГЛАВНАЯ';
 	
 	public function __construct(){
         
@@ -12,8 +13,6 @@ class MainController extends Controller{// контроллер страницы
         
         // отправляю в родит-й конструктор эти объекты
 		parent::__construct($this -> arr = [$vid,$testm]);
-        
-        $this->title = 'Управление страницей ГЛАВНАЯ';
         
 	}
 
