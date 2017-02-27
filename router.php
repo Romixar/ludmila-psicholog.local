@@ -35,7 +35,7 @@ class Router{
             $ctrl = new AppController();
             
             
-            exit('<br/>включился роутер!');
+            exit();
         }
 
         // запрос в админскую часть
