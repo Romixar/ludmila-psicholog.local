@@ -31,8 +31,11 @@ class Router{
         $tmp = [];
         
         if(count($arr) == 2 && empty($arr[1])){ // запрос пользовательского сайта
-            include 'index.php';
-            exit();
+            //include 'index.php';
+            $ctrl = new AppController();
+            
+            
+            exit('<br/>включился роутер!');
         }
 
         // запрос в админскую часть
@@ -94,7 +97,7 @@ class Router{
     
     
     
-    
+
     
     
     

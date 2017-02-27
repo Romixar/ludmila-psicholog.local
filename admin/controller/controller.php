@@ -26,7 +26,7 @@ class Controller{
 	
 	public function __construct(){
         
-        $this -> sysmes = Session::flash('sysmes'); // вывод $_SESSION['sysmes'] и его удаление
+        $this -> sysmes = Session::flash('sysmes'); // вывод $_SESSION['sysmes'] и её удаление
 		
 		$this -> mes = new Messages();// Объект вывода системных сообщений
         

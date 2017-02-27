@@ -41,6 +41,30 @@ function __autoload($cl_name){
         
     }
     
+    if(file_exists(__DIR__.'/admin/'.$file)){
+        
+        include_once __DIR__.'/admin/'.$file;
+        
+    }
+    
+    if(file_exists(__DIR__.'/model/'.$file)){
+        
+        include_once __DIR__.'/model/'.$file;
+        
+    }
+    
+    if(file_exists(__DIR__.'/controller/'.$file)){
+        
+        include_once __DIR__.'/controller/'.$file;
+        
+    }
+    
+    if(file_exists(__DIR__.'/view/'.$file)){
+        
+        include_once __DIR__.'/view/'.$file;
+        
+    }
+    
     
 }
 
