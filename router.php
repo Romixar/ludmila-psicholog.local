@@ -40,7 +40,7 @@ class Router{
         }
 
         // запрос в админскую часть
-        if((count($arr) > 3) || (!isset($_SESSION['loggedIn'])) || ($arr[1] == 'admin' && $arr[2] == '')){
+        if((count($arr) > 3) || (!isset($_SESSION['loggedIn'])) || ($arr[1] == 'admin' && $arr[2] == '') || ($arr[1] == 'admin' && count($arr) == 2)){
             
             
             $ctrl = 'login';

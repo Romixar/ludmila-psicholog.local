@@ -31,7 +31,7 @@ class AppController{
         
         
         
-        $this -> view -> render('main',compact('homepage','gallery','about','contact'));
+        $this -> view -> render('main1',compact('homepage','gallery','about','contact'));
     }
     
     

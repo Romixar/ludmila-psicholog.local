@@ -23,13 +23,14 @@ class ViewsController{
 	}
     
     public function prerender($tmpl,$data=[]){
-        
-        if(file_exists('view/'.$tmpl.'_tpl.php')){
-            
+
+        if(file_exists('D:\OpenServer\domains\ludmila-psicholog.local\admin\view\\'.$tmpl.'_tpl.php')){
+
             ob_start();
             extract($data); // названия ключей будут переменными
 
-            include '/../view/'.$tmpl.'_tpl.php';
+            //include '/admin/view/'.$tmpl.'_tpl.php';
+            include 'D:\OpenServer\domains\ludmila-psicholog.local\admin\view\\'.$tmpl.'_tpl.php';
             
             return ob_get_clean();
 
