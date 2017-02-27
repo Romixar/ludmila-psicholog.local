@@ -25,6 +25,8 @@ class Controller{
     
 	
 	public function __construct(){
+        
+        $this -> sysmes = Session::flash('sysmes'); // вывод $_SESSION['sysmes'] и его удаление
 		
 		$this -> mes = new Messages();// Объект вывода системных сообщений
         
@@ -100,8 +102,9 @@ class Controller{
         $errors = array_unique($this -> err);// отфильтровывваю повторные ошибки
 
         foreach($errors as $k => $val){
-            $this->sysmes .= $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
+            $sysmes .= $this -> mes -> getMessage($val);// вывод сообщений ошибок без повторных
         }
+        Session::flash('sysmes',$sysmes);
         $newerr = $this -> getDoubleArr($this -> err);//получаю двум-й массив кодов ошибок
 
         // создание доп. элемента с пометкой в ключе об ошибке для вывода в форму
@@ -235,9 +238,14 @@ class Controller{
         // проверка последнего ответа
 		if(!$res){
             if($this -> arr_func[0] != 'add'){// чтобы не вывелось при нажатии ДОБАВИТЬ
-                $this->sysmes = $this->mes->getMessage('SUC_SAVE',$this->getClassName($this->cl));
+                
+                $sysmes = $this->mes->getMessage('SUC_SAVE',$this->getClassName($this->cl));
+                Session::flash('sysmes',$sysmes);
             }
-        }else $this->sysmes = $this -> mes -> getMessage('ERR_SAVE');
+        }else Session::flash('sysmes',$this -> mes -> getMessage('ERR_SAVE'));
+        
+        $this->refresh();
+        
 
 	}
     
@@ -252,15 +260,21 @@ class Controller{
 			$key = str_replace('`','',$key);
             $params[':'.$key] = $val;// указываю элемент без кавычек
 		}
-        if($this -> cl -> insert($cols, $params)) // должен прийти ID последней доб записи
-            $this->sysmes = $this -> mes -> getMessage('SUC_ADD',$this -> getClassName($this -> cl));
-        else $this->sysmes = $this -> mes -> getMessage('ERR_ADD');
+        if($this -> cl -> insert($cols, $params)){// должен прийти ID последней доб записи
+            
+            $sysmes = $this -> mes -> getMessage('SUC_ADD',$this -> getClassName($this -> cl));
+            Session::flash('sysmes',$sysmes);
+        }else Session::flash('sysmes',$this -> mes -> getMessage('ERR_ADD'));
+        
+        $this->refresh();
         
     }
 	
     
     
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
+        
+        //$this -> deleteGET($get);
         
 
 		try{// отлов исключений при удалении из базы данных		
@@ -271,7 +285,10 @@ class Controller{
                 
                 if($model -> findModel($get['id'])){
                     $model -> delete($get['id']);
-                    $this -> sysmes = $this -> mes -> getMessage('SUC_DEL');
+                    
+                    Session::flash('sysmes', $this -> mes -> getMessage('SUC_DEL'));
+                    $this->refresh();
+                    
                 }else return false;
                 
             }
@@ -285,18 +302,9 @@ class Controller{
 		}
 	}
     
-    private function deleteGET(){
-        $url1 = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // без GET
-        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);// все GET
-        $url = substr($url,strpos($url,'?'));
-        
-        if(!empty($url)){
-            
-            if(strpos($url1,'?') === false) $url1 = $url1.'?';
-            
-            $url = $url1.$url;
-            header('Location: '.$url);
-        }
+    public function refresh(){
+        $url = $this -> getURL(); // получаю полный URL без GET
+        header('Location: '.$url);
     }
     
     
@@ -380,7 +388,8 @@ class Controller{
     }
     
     private function getURL(){
-        return Config::HOST_ADDRESS.$_SERVER['REQUEST_URI'];
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // без GET параметров
+        return Config::HOST_ADDRESS.$url;
     }
 	
 	
