@@ -31,6 +31,10 @@ class DB{
 		
 	}
     
+    public function findAll(){
+        return 'попал в класс DB';
+    }
+    
 	protected function query($sql, $params = false){// обработка запроса в PDO
 	
 		if(!$params){

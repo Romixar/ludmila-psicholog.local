@@ -10,9 +10,9 @@ class AppViewsController{
 
 	public function render($tmpl,$data=[]){// подготовить но не выводить view
         
-        $$tmpl = $this->prerender($tmpl,$data);
+        //$$tmpl = $this->prerender($tmpl,$data);
         
-        $this -> display('main',compact($tmpl));
+        $this -> display($tmpl,$data);
 
 	}
 	

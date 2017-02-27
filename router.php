@@ -33,6 +33,7 @@ class Router{
         if(count($arr) == 2 && empty($arr[1])){ // запрос пользовательского сайта
             //include 'index.php';
             $ctrl = new AppController();
+            $ctrl->actionIndex();
             
             
             exit();
