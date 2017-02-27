@@ -266,29 +266,23 @@ class Controller{
 
             if($this->isIntNum($get['id']) && $this->checkClassName($get['mod'])){
                 
-                if($model = $this->findAndDelModel($get))
+                $model = new $get['mod']();// созд объект, у которого удалить элемент
+                
+                if($model -> findModel($get['id'])){
+                    $model -> delete($get['id']);
                     $this -> sysmes = $this -> mes -> getMessage('SUC_DEL');
-                else return false;
+                }else return false;
                 
             }
             
             
 		}catch(Exception $e){
-            
-			//$view = new View();
-//            $view = new ViewsController();
+
+//          $view = new ViewsController();
 //			$view -> err = $e -> getMessage();
 //			$view -> display('error');
 		}
 	}
-
-    
-    private function findAndDelModel($get){
-        
-        $model = new $get['mod']();// созд объект, у которого удалить элемент
-        if($model -> checkID($get['id'])) return true;// проверить есть ли такой id и удалить
-        return false;
-    }
     
     
 	private function checkClassName($cl_name_str){// проверяю наличие класса

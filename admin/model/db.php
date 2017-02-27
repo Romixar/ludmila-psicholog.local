@@ -88,35 +88,21 @@ class DB{
 		return $sth -> fetch()[0];// получаю массив с ответом
 		
 	}
-	
-	public function checkID($id){
-		
-		$sql = 'SELECT * FROM `'.static::$table.'` WHERE `id` = :id';
-		
-		$params = [':id' => $id];
-		
-//        echo $sql.'<br/>';
-//        print_r($params);die;
-        $obj = $this -> query($sql, $params);
+    
+    public function findModel($id){
         
-		if($obj !== false){
-            // $this -> delete возвращает FALSE при успешном удалении
-            if($this -> delete($params)) return false;
-		    return true;
-//			throw new MyException('Ничего не найдено для удаления в базе!');// вброс исключения
-//			return true;
-        }
-           
+        $sql = 'SELECT * FROM `'.static::$table.'` WHERE `id` = :id';
 		
-		
-		
-	}
+        $obj = $this -> query($sql, [':id' => $id]);
+        if($obj !== false) return true;
+        return false;
+    }
 	
-	public function delete($params){
+	public function delete($id){
 		
 		$sql = 'DELETE FROM `'.static::$table.'` WHERE `id` = :id';
 		
-		return $this -> query($sql, $params);
+		$this -> query($sql, [':id' => $id]);
         
 	}
 	
