@@ -22,6 +22,8 @@ class Router{
         
         $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // без GET параметров
 
+        //echo $url.'?'.$url1;
+        
         $arr = explode('/',$url);
         
         $reg = '/[a-zA-Z]*/';

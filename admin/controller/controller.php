@@ -261,6 +261,7 @@ class Controller{
     
     
 	public function checkOnDelete($get){//проверка надо ли удалять элемент из БД
+        
 
 		try{// отлов исключений при удалении из базы данных		
 
@@ -283,6 +284,20 @@ class Controller{
 //			$view -> display('error');
 		}
 	}
+    
+    private function deleteGET(){
+        $url1 = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // без GET
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);// все GET
+        $url = substr($url,strpos($url,'?'));
+        
+        if(!empty($url)){
+            
+            if(strpos($url1,'?') === false) $url1 = $url1.'?';
+            
+            $url = $url1.$url;
+            header('Location: '.$url);
+        }
+    }
     
     
 	private function checkClassName($cl_name_str){// проверяю наличие класса
