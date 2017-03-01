@@ -34,6 +34,21 @@ class AppController{
         $this -> view -> render('main1',compact('homepage','gallery','about','contact'));
     }
     
+    public function actionView($id){
+        
+        $model = new Services();
+        
+        if($model->findModel($id)){
+            
+            $data = $model->find($id);
+            
+            $view_service = $this -> view -> prerender('view_service',compact('data'));
+            $this -> view -> render('main1',compact('view_service'));
+            
+        }else $this->actionIndex();
+        
+    }
+    
     
     public function getTmplVideos(){
         
@@ -78,11 +93,16 @@ class AppController{
     }
     
     public function getTmplServices(){
-        
+        $check = new Check();
         $model = new Services();
 
-        $data = $model -> selectAll();
+        $data = $model -> select('`id`,`title`,`img`,`description`');
         
+        for($i=0; $i<count($data); $i++){
+            
+            $data[$i]->description = $check->getPreviewText($data[$i]->description, $body);
+        }
+            
         return $this -> view -> prerender('services',compact('data'));
 
     }

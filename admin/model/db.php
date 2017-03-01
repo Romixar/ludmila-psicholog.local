@@ -31,10 +31,7 @@ class DB{
 		
 	}
     
-    public function findAll(){
-        return 'попал в класс DB';
-    }
-    
+
 	protected function query($sql, $params = false){// обработка запроса в PDO
 	
 		if(!$params){
@@ -117,6 +114,23 @@ class DB{
 		return $this -> query($sql);
 		//var_dump($this -> query($sql));
 	}
+    
+    public function select($fields){
+        
+        $sql = 'SELECT '.$fields.' FROM `'.static::$table.'`';
+		
+		return $this -> query($sql);
+        
+    }
+    
+    public function find($id){
+        
+        $sql = 'SELECT * FROM `'.static::$table.'` WHERE `id` = :id';
+        $obj = $this -> query($sql, [':id' => $id]);
+        return $obj;
+        
+        
+    }
 	
 	
 	public function update($data, $params){

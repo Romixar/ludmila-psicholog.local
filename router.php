@@ -38,6 +38,14 @@ class Router{
             
             exit();
         }
+        
+        if(count($arr) == 3 && $arr[1] == 'view' && preg_match('/\d/',$arr[2])){
+            
+            $ctrl = new AppController();
+            $ctrl->actionView($arr[2]);
+            
+            exit();
+        }
 
         // запрос в админскую часть
         if((count($arr) > 3) || (!isset($_SESSION['loggedIn'])) || ($arr[1] == 'admin' && $arr[2] == '') || ($arr[1] == 'admin' && count($arr) == 2)){

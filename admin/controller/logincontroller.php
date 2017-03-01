@@ -19,9 +19,7 @@ class LoginController extends Controller{
     
     
     public function actionRun(){
-        
-        //echo 'запуск логин ран';
-        
+
         $view = new ViewsController();
         
         if(isset($this->data['do_login'])) $this -> model -> run();

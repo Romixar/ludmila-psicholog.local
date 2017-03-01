@@ -9,20 +9,21 @@
 	<meta name="yandex-verification" content="3a64b7984496fd3a" />
 	<link rel="icon" href="http://psicholog-ludmila.ru/favicon.ico" type="image/x-icon">
  	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700,800' rel='stylesheet' type='text/css'/> 
-   	<link rel="stylesheet" href="css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="css/bootstrap.min.css"/> 
-   	<link rel="stylesheet" href="css/templatemo_misc.css"/>
-	<link rel="stylesheet" href="css/templatemo_style.css"/>
-    <link rel="stylesheet" href="css/style.css"/>
+   	<link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/> 
+   	<link rel="stylesheet" href="/css/templatemo_misc.css"/>
+	<link rel="stylesheet" href="/css/templatemo_style.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
    	<!-- JavaScripts -->   
-    <script src="js/jquery-1.11.1.min.js"></script>  <!-- lightbox -->
-	<script src="js/templatemo_custom.js"></script> <!-- lightbox -->
-    <script src="js/jquery.lightbox.js"></script>
-    <script src="js/bootstrap-collapse.js"></script>
+    <script src="/js/jquery-1.11.1.min.js"></script>  <!-- lightbox -->
+	<script src="/js/templatemo_custom.js"></script> <!-- lightbox -->
+    <script src="/js/jquery.lightbox.js"></script>
+    <script src="/js/bootstrap-collapse.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="js/jqbootstrapvalidation.js"></script>
-    <script src="js/recall_me.js"></script>
-    <script src="js/send_mail.js"></script>
+    <script src="/js/jqbootstrapvalidation.js"></script>
+    <script src="/js/recall_me.js"></script>
+    <script src="/js/send_mail.js"></script>
+    <script src="/js/my.js"></script>
     <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -129,6 +130,7 @@
         
     <div class="content homepage" id="menu-1">
     
+  	    <?= $view_service ?>
   	    <?= $homepage ?>
   	
     </div><!-- homepage end -->
@@ -173,9 +175,9 @@
             		<div class="col-md-6">САЙТ О ПСИХОЛОГИИ, ПСИХОЛОГАХ И ПСИХОТЕРАПИИ</div>
                     <div class="col-md-6">
                         
-                    	<div class="social"><a href="###" target="_blank"><img src="images/templatemo_fb.jpg" alt="Людмила Пьянкова в facebook" title="Людмила Пьянкова в facebook"></a></div>
-                        <div class="social"><a href="https://www.youtube.com/channel/UCCUILG19M3aIbdZYr-Yi7tQ" target="_blank"><img src="images/488897youtube.png" alt="Людмила Пьянкова на youtube" title="Людмила Пьянкова на youtube"></a></div>
-                        <div class="social"><a href="skype:duby.ludmila?call" target="_blank"><img src="images/skype-icon-26.png" alt="позвонить психологу по skype" title="Людмила Пьянкова в skype"></a></div>
+                    	<div class="social"><a href="###" target="_blank"><img src="/images/templatemo_fb.jpg" alt="Людмила Пьянкова в facebook" title="Людмила Пьянкова в facebook"></a></div>
+                        <div class="social"><a href="https://www.youtube.com/channel/UCCUILG19M3aIbdZYr-Yi7tQ" target="_blank"><img src="/images/488897youtube.png" alt="Людмила Пьянкова на youtube" title="Людмила Пьянкова на youtube"></a></div>
+                        <div class="social"><a href="skype:duby.ludmila?call" target="_blank"><img src="/images/skype-icon-26.png" alt="позвонить психологу по skype" title="Людмила Пьянкова в skype"></a></div>
 
                     </div>
                     <div class="clear"></div>
